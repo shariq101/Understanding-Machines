@@ -71,7 +71,6 @@ bash kaggle/microscope/fetch.sh
 python3 -m http.server 8000 --directory visualizations
 ```
 
-The result is **not** a replication of Goodfire’s architecture-modified InceptionV1, and Imagenette supplies ten coarse classes rather than ImageNet’s full 1,000. A top image is evidence of correlation with the channel, not a causal circuit and not proof that the channel has one job. Those limits are printed on the page.
 
 ![The feature microscope](readme/microscope.png)
 
