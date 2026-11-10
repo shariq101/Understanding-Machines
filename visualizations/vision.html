@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The vision lab · The Understanding Machine</title>
+<meta name="description" content="An interactive reading of the vision ablation panel: five ViT-family models, every head and MLP ablated alone, ACDC circuits, and every contiguous block of layers measured with two handles.">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/vision.css">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="topbar"><div class="inner">
+  <a class="brand" href="index.html">The Understanding <span>Machine</span></a>
+  <nav aria-label="Sections">
+    <a href="index.html">Contents</a>
+    <a href="vision.html" class="active" aria-current="page">Vision lab</a>
+    <a href="studio.html">Ablation studio</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="distill.html">Distillation</a>
+  </nav>
+  <div class="tools"><button id="themebtn" type="button" aria-label="Switch between light and dark">Theme</button></div>
+</div></header>
+
+<main class="wide lab">
+  <p class="kicker">Part XVI · the same graph, in pixels</p>
+  <h1>The vision lab</h1>
+  <p class="lede">Five ViT-family models read the same pictures. Pick one, ask what a single head or MLP contributes on its own, then choose a range of layers and see what removing it — or keeping only it — does to the answer.</p>
+  <p class="small">For the four-view version — a clickable layer board, a damage cascade, every measured run, and all the deletion curves at once — open <a href="studio.html">the ablation studio</a>.</p>
+
+  <div class="tabs" id="tabs" role="tablist" aria-label="Model"></div>
+  <div class="facts" id="facts" aria-live="polite"></div>
+
+  <div class="panels">
+    <section class="panel" aria-labelledby="h-atlas">
+      <h2 id="h-atlas">The atlas, one node at a time</h2>
+      <p class="hint">Each cell is one attention head, or the layer's MLP, replaced by the write it produced for a different image. Rows are layers, columns are heads; the last column is the MLP.</p>
+      <div id="atlas" class="scroll"></div>
+      <div class="ctl" id="atlas-ctl"></div>
+      <div class="readout" id="atlas-read"></div>
+      <div class="legend" id="atlas-legend"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="h-layers">
+      <h2 id="h-layers">The layer playground</h2>
+      <p class="hint">Pick a range of layers and a direction. Every cell of the grid was measured on the same image bank, so the two handles select a result rather than compute one.</p>
+      <div class="ctl" id="layer-ctl"></div>
+      <div id="layer-matrix" class="scroll"></div>
+      <div class="readout" id="layer-read"></div>
+      <div class="recon" id="layer-recon"></div>
+    </section>
+
+    <section class="panel wide-panel" aria-labelledby="h-ablate">
+      <h2 id="h-ablate">Ablate by hand</h2>
+      <p class="hint">Click any head or MLP to replace it with the write it produced for a different image; click again to restore it. One node is a measurement, and so is a run of complete layers — the block grid has those. Any other set is a sum of separate measurements, and the panel tells you which of the three you are reading.</p>
+      <div class="ctl" id="abl-ctl"></div>
+      <div id="abl-grid" class="scroll"></div>
+      <div class="readout" id="abl-read"></div>
+      <div id="abl-ledger"></div>
+    </section>
+
+    <section class="panel wide-panel" aria-labelledby="h-circuit">
+      <h2 id="h-circuit">The circuit, kept and removed</h2>
+      <p class="hint">ACDC kept the edges whose removal cost the most. Both directions are reported against random sets of the same size, because a circuit that does nothing also reports a number.</p>
+      <div id="circuit"></div>
+      <div id="occlusion"></div>
+    </section>
+
+    <section class="panel wide-panel" aria-labelledby="h-where">
+      <h2 id="h-where">Where the circuit sits</h2>
+      <p class="hint">Kept edges by sender and receiver. Row 0 is the token embedding; the last column is the output head.</p>
+      <div id="circuit-matrix" class="scroll"></div>
+      <div class="legend" id="circuit-legend"></div>
+    </section>
+  </div>
+
+  <p class="note"><b>What this page is.</b> Nothing here runs a model in the browser. Every number is a measurement made once, on a GPU, over a fixed bank of images; the controls select among measured conditions. Where the measurement is missing — a sweep still running, a model that has no pixels to show — the panel says so instead of drawing a plausible line.</p>
+
+  <p class="backlink"><a href="index.html">← Back to the book</a></p>
+</main>
+
+<noscript><p class="wrap">This page needs JavaScript: the panels are built from a measured data file.</p></noscript>
+<script src="vision-data.js"></script>
+<script src="assets/vision.js?v=3"></script>
+</body>
+</html>

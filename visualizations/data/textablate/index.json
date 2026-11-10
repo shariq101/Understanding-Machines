@@ -1,0 +1,72 @@
+[
+ {
+  "slug": "deepseek-r1-distill-qwen-1.5b",
+  "hf_name": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+  "chat": true,
+  "file": "deepseek-r1-distill-qwen-1.5b.json",
+  "layers": 28,
+  "heads": 12,
+  "travel": true,
+  "parts": true
+ },
+ {
+  "slug": "gpt2",
+  "hf_name": "openai-community/gpt2",
+  "chat": false,
+  "file": "gpt2.json",
+  "layers": 12,
+  "heads": 12,
+  "travel": true,
+  "parts": true
+ },
+ {
+  "slug": "gpt2-large",
+  "hf_name": "openai-community/gpt2-large",
+  "chat": false,
+  "file": "gpt2-large.json",
+  "layers": 36,
+  "heads": 20,
+  "travel": true,
+  "parts": true
+ },
+ {
+  "slug": "gpt2-medium",
+  "hf_name": "openai-community/gpt2-medium",
+  "chat": false,
+  "file": "gpt2-medium.json",
+  "layers": 24,
+  "heads": 16,
+  "travel": true,
+  "parts": true
+ },
+ {
+  "slug": "qwen2.5-0.5b-instruct",
+  "hf_name": "Qwen/Qwen2.5-0.5B-Instruct",
+  "chat": true,
+  "file": "qwen2.5-0.5b-instruct.json",
+  "layers": 24,
+  "heads": 14,
+  "travel": true,
+  "parts": true
+ },
+ {
+  "slug": "qwen2.5-1.5b-instruct",
+  "hf_name": "Qwen/Qwen2.5-1.5B-Instruct",
+  "chat": true,
+  "file": "qwen2.5-1.5b-instruct.json",
+  "layers": 28,
+  "heads": 12,
+  "travel": true,
+  "parts": true
+ },
+ {
+  "slug": "tinyllama-1.1b-chat",
+  "hf_name": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+  "chat": true,
+  "file": "tinyllama-1.1b-chat.json",
+  "layers": 22,
+  "heads": 32,
+  "travel": true,
+  "parts": true
+ }
+]

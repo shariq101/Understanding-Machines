@@ -1,0 +1,9 @@
+{
+ "outputs": [
+  null,
+  "loaded checkpoints/induction.pt task: induction-gap\nconfig: {'vocab_size': 17, 'n_layers': 2, 'd_model': 64, 'n_heads': 4, 'd_mlp': 256, 'max_len': 40, 'dropout': 0.0, 'causal': True}\nparameters: 103744",
+  "L= 8 gap=4  accuracy=0.969\nL=10 gap=5  accuracy=0.971\nL=12 gap=3  accuracy=0.977",
+  "prompt length: 29  next-token prediction: 13\nexpected next token: 13",
+  null
+ ]
+}

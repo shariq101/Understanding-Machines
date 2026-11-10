@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The ripple · The Understanding Machine</title>
+<meta name="description" content="Cut one block out of GPT-2 and watch the measured change travel down the stack: the residual stream at every later depth, and the next-token distribution it lands on.">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/text.css">
+<link rel="stylesheet" href="assets/travel.css">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="topbar"><div class="inner">
+  <a class="brand" href="index.html">The Understanding <span>Machine</span></a>
+  <nav aria-label="Sections">
+    <a href="index.html">Contents</a>
+    <a href="vision.html">Vision lab</a>
+    <a href="studio.html">Ablation studio</a>
+    <a href="text.html">Language models</a>
+    <a href="travel.html" class="active" aria-current="page">The ripple</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="distill.html">Distillation</a>
+  </nav>
+  <div class="tools"><button id="themebtn" type="button" aria-label="Switch between light and dark">Theme</button></div>
+</div></header>
+
+<main class="wide travel-page">
+  <p class="kicker">Part XVI · the ripple</p>
+  <h1>Cut one layer. Watch the <i>damage</i> travel.</h1>
+  <p class="lede" id="lede">Loading the measured residuals…</p>
+
+  <div class="rail" id="models" role="tablist" aria-label="Model"></div>
+  <div class="facts" id="facts" aria-live="polite"></div>
+  <div class="prompts" id="prompts" aria-label="Prompt"></div>
+
+  <div class="flow">
+    <section class="panel stack-panel" aria-labelledby="stack-title">
+      <div class="panel-head">
+        <h2 id="stack-title">The architecture</h2>
+        <span class="hint">click a block to cut it</span>
+      </div>
+      <div class="arch" id="arch"></div>
+      <div class="picker" id="picker"></div>
+      <div class="block-inset" aria-label="Inside one transformer block">
+        <p class="inset-h">Inside one block</p>
+        <div class="inset-row">
+          <b>LN</b><i>→</i><b class="a">12 heads</b><i>→</i><b>concat · out-proj</b><i>→</i><b class="add">+</b><i>residual</i>
+        </div>
+        <div class="inset-row">
+          <b>LN</b><i>→</i><b class="m">MLP</b><i>→</i><b class="add">+</b><i>residual</i>
+        </div>
+        <p class="note">The two <b>+</b> marks are where the ablated write enters the stream: a head’s slice of the concatenated write, the MLP’s write, or both for a whole-block cut.</p>
+      </div>
+      <div class="stack-wrap">
+        <p class="inset-h">The measured ripple, as numbers</p>
+        <div class="stack" id="stack"></div>
+      </div>
+      <p class="note">Each bar is measured, not drawn: the relative change in the residual stream at the final token, at that depth, while the selected piece is mean-ablated. Before the cut the bar is empty because nothing has happened yet.</p>
+    </section>
+
+    <aside class="readout" id="readout" aria-live="polite"></aside>
+  </div>
+
+  <section class="panel matrix-panel" aria-labelledby="matrix-title">
+    <div class="panel-head">
+      <h2 id="matrix-title">The travel matrix</h2>
+      <span class="hint">row = layer cut · column = depth measured</span>
+    </div>
+    <div class="matrix" id="matrix"></div>
+    <p class="note" id="matrix-note"></p>
+  </section>
+
+  <p class="method"><b>What is being measured.</b> For one prompt, the model runs clean and its residual stream is recorded after each of GPT-2's twelve blocks, at the final token. Then one whole block — all twelve heads plus its MLP — is mean-ablated, the model runs again, and the same twelve points are recorded. The bar at depth <var>d</var> is ‖h<sub>d</sub><sup>cut</sup> − h<sub>d</sub><sup>clean</sup>‖ divided by ‖h<sub>d</sub><sup>clean</sup>‖, so it is a fraction, not a distance in some arbitrary unit. The matrix repeats this for every layer, which is why the area above the diagonal is exactly zero: cutting block 7 cannot change the stream that left block 3. That zero is a check on the measurement, not an assumption.</p>
+
+  <p class="method"><b>What the ripple is not.</b> It is not the only path by which a cut reaches the output. Attention reads the whole residual stream, so a change at depth 3 is also read directly by every later block; the bars show where the stream differs, not how much each later block contributed to the final logits. The output panel is the measured end of the chain: KL from the clean distribution, and the clean top-1 token’s probability after the cut.</p>
+
+  <p class="backlink"><a href="text.html">← The language-model panel</a> · <a href="studio.html">The vision ablation studio</a> · <a href="index.html">Back to the book</a></p>
+</main>
+
+<noscript><p class="wrap">This page needs JavaScript: the ripple is built from a measured data file.</p></noscript>
+<script src="assets/travel.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+ "outputs": [
+  null,
+  "",
+  null,
+  "teacher set: one domain specialist per task\ncopy teacher step   0  loss 2.773\ncopy teacher step 649  loss 0.000\ntrained copy in 17.0 s\nreverse teacher step   0  loss 2.698\nreverse teacher step 649  loss 0.000\ntrained reverse in 17.5 s\nsort teacher step   0  loss 2.674\nsort teacher step 649  loss 0.000\ntrained sort in 19.5 s",
+  null,
+  "teacher       own exact  own content  other-domain exact\ncopy          1.000        1.000             0.023\nreverse       1.000        1.000             0.109\nsort          1.000        1.000             0.055",
+  null,
+  "",
+  null,
+  "off 31 step   0  KL 2.762\noff 31 step 299  KL 0.001\noff 32 step   0  KL 2.765\noff 32 step 299  KL 0.042\non  33 step   0  KL 2.653\non  33 step 299  KL 0.390\noff 34 step   0  KL 2.745\non  34 step 299  KL 0.382\nmix 35 step   0  KL 2.603\nmix 35 step 299  KL 0.142\ntraining seconds: single 15.0 off 43.2 on 45.9 warm-start on 37.8 prefix mix 44.5",
+  null,
+  "student             copy  reverse   sort\nsingle teacher     1.000  0.023  0.078   mean exact 0.367\n                   1.000  0.023  0.078   content by domain\nmulti off-policy   0.973  0.934  0.969   mean exact 0.958\n                   0.973  0.934  0.969   content by domain\nmulti on-policy    0.102  0.090  0.875   mean exact 0.355\n                   0.102  0.090  0.875   content by domain\nwarm on-policy     0.094  0.090  0.957   mean exact 0.380\n                   0.094  0.090  0.957   content by domain\nprefix mix         0.918  0.793  0.852   mean exact 0.854\n                   0.918  0.793  0.852   content by domain",
+  null,
+  "domain   teacher exact  teacher next-token  student exact (on-policy)  warm on-policy  prefix mix\ncopy              1.000              1.000                    0.102            0.094        0.918\nreverse           1.000              1.000                    0.090            0.090        0.793\nsort              1.000              1.000                    0.875            0.957        0.852",
+  null,
+  "teacher queries per on-policy update: 480\nteacher queries per off-policy update: 480\nstudent-generated prefixes per on-policy update: 480\ncontent tokens per held-out prompt: 4  total target tokens: 5\ndomains: ['copy', 'reverse', 'sort']\nteacher parameters: [102080, 102080, 102080]\nstudent parameters: 102080",
+  null
+ ]
+}

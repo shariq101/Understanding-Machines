@@ -1,0 +1,11 @@
+{
+ "outputs": [
+  null,
+  "activation shape: (3000, 48)\nSAE: {'fvu': 0.0082, 'l0': 15.3, 'd_hidden': 192, 'l1': 0.8}\nactive features: 176 of 192",
+  "colour   mean purity=0.678  best=1.000\nshape    mean purity=0.597  best=1.000\nposition mean purity=0.657  best=1.000",
+  "best colour feature: 5 purity 1.0 preferred red",
+  "base: {'colour': 1.0, 'shape': 0.778, 'position': 1.0, 'red_frac': 0.333}",
+  "SAE direction alpha 2.0 {'colour': 1.0, 'shape': 0.741, 'position': 1.0, 'red_frac': 0.333}\nSAE direction alpha 5.0 {'colour': 0.852, 'shape': 0.704, 'position': 1.0, 'red_frac': 0.481}\nSAE direction alpha 10.0 {'colour': 0.519, 'shape': 0.556, 'position': 0.741, 'red_frac': 0.815}",
+  "mean-shift alpha 2.0 {'colour': 0.963, 'shape': 0.741, 'position': 1.0, 'red_frac': 0.37}\nmean-shift alpha 5.0 {'colour': 0.556, 'shape': 0.741, 'position': 1.0, 'red_frac': 0.778}\nmean-shift alpha 10.0 {'colour': 0.556, 'shape': 0.741, 'position': 1.0, 'red_frac': 0.778}"
+ ]
+}

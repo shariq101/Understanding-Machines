@@ -1,0 +1,14 @@
+{
+ "outputs": [
+  null,
+  "scenes: 16  image tokens: 17  first answer: 1",
+  "base probability: mean 1.0  min 0.997",
+  "occlusion: mean drop 0.0225  largest token 12  class-token drop -0.0002",
+  "gradient: mass on class token 0.03  largest patch 12",
+  "attention: class-token mass 0.113  entropy 2.414",
+  "occlusion  AUC=0.408  p@k=1 0.661  k=5 0.310  k=10 0.315\ngradient   AUC=0.528  p@k=1 0.813  k=5 0.625  k=10 0.375\nattention  AUC=0.431  p@k=1 0.750  k=5 0.435  k=10 0.252\nrandom     AUC=0.725",
+  "rank corr occlusion vs gradient : -0.305\nrank corr occlusion vs attention: +0.127\nrank corr gradient  vs attention: -0.031",
+  "sum of four single drops: 0.382\njoint drop of the same four: 0.657\nnon-additivity (sum - joint): -0.274",
+  "class token alone: -0.0\nall 16 patch tokens: 0.625"
+ ]
+}

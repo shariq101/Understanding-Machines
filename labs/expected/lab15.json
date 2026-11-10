@@ -1,0 +1,10 @@
+{
+ "outputs": [
+  null,
+  "sequence length: 25  image tokens: 17  text starts at 17",
+  "layer  restored  before    after    clean\n    0     0.000  -10.846  -10.846   12.265\n    1     1.025  -10.846   12.835   12.265\n    2     1.017  -10.846   12.651   12.265\n    3     1.034  -10.846   13.055   12.265",
+  "image-token restoration at layer 0:\n-0.00 -0.00 -0.00 -0.00\n+0.20 +0.05 +0.00 -0.00\n+0.43 +0.04 -0.01 -0.00\n-0.00 -0.00 -0.00 -0.00\ntop tokens: [(9, 0.429), (5, 0.205), (6, 0.053), (10, 0.041), (11, -0.012)]",
+  "class token alone: -0.002",
+  "control token 1 restored: -0.0\ncontrol token 16 restored: -0.0"
+ ]
+}

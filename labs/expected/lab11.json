@@ -1,0 +1,8 @@
+{
+ "outputs": [
+  null,
+  "direct parameters: 102912  CoT parameters: 102912\nlength 10  direct 0.475  chain-of-thought 1.000\nlength 14  direct 0.512  chain-of-thought 0.450\nlength 18  direct 0.537  chain-of-thought 0.550",
+  null,
+  "forward passes for a length-10 CoT answer: 11\nforward passes for a length-18 CoT answer: 19 (and it is still wrong)"
+ ]
+}

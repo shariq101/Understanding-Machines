@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Language-model ablation · The Understanding Machine</title>
+<meta name="description" content="Remove one attention head, one MLP, or one whole layer from a language model, read the measured change in the next-token distribution, and put it back. GPT-2 measured here; Qwen and DeepSeek measured on a GPU.">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/text.css">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="topbar"><div class="inner">
+  <a class="brand" href="index.html">The Understanding <span>Machine</span></a>
+  <nav aria-label="Sections">
+    <a href="index.html">Contents</a>
+    <a href="vision.html">Vision lab</a>
+    <a href="studio.html">Ablation studio</a>
+    <a href="text.html" class="active" aria-current="page">Language models</a>
+    <a href="travel.html">The ripple</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="distill.html">Distillation</a>
+  </nav>
+  <div class="tools"><button id="themebtn" type="button" aria-label="Switch between light and dark">Theme</button></div>
+</div></header>
+
+<main class="wide text-page">
+  <p class="kicker">Part XVI · the language-model panel</p>
+  <h1>Remove a head, watch the <i>token</i> move.</h1>
+  <p class="lede" id="lede">Loading the measurements…</p>
+
+  <div class="rail" id="models" role="tablist" aria-label="Model"></div>
+  <div class="facts" id="facts" aria-live="polite"></div>
+  <p class="backlink"><a href="atlas.html">Every head's attention, before any cut — the activation atlas →</a></p>
+  <div class="prompts" id="prompts" aria-label="Prompt"></div>
+
+  <div class="grid">
+    <section class="panel" aria-labelledby="stage-title">
+      <div class="panel-head">
+        <h2 id="stage-title">The layer board</h2>
+        <span class="hint">one chip = one head, one MLP, or the whole block</span>
+      </div>
+      <div class="stage" id="stage" aria-live="polite"></div>
+      <p class="note" id="stage-note"></p>
+    </section>
+
+    <aside class="output" id="output" aria-live="polite" aria-label="Measured effect"></aside>
+  </div>
+
+  <p class="method"><b>What “remove” means here.</b> Nothing is deleted from the graph. The node keeps its shape and receives the same input, but its write into the residual stream is replaced — at every token position — by the mean write it produced over the eight prompts. The model still runs end to end; the node has simply been made to say what it says on average, which carries no information about this particular prompt. That is <i>mean-ablation</i>, and it is the intervention behind every number on this page. A whole layer is all of its heads and its MLP ablated together, so the residual stream still carries their mean writes: it is not the same thing as deleting the block from the graph, and the page never calls it that.</p>
+
+  <p class="method"><b>What is measured, and where.</b> The next-token distribution after the prompt, from one forward pass. <var>KL</var> is the divergence in nats from the clean distribution; the probability is the clean model’s top-1 token, watched as it falls. GPT-2 small is measured on this machine, in float32, on CPU. The Qwen and DeepSeek rows are measured on a T4 through the notebook in <code>kaggle/</code>, with float16 weights; those two are chat models, so their prompt is the chat template plus the forced prefix “The answer is”, and the measured token is the first one after it. The comparison across models is indicative, not a controlled experiment.</p>
+
+  <p class="backlink"><a href="studio.html">← The vision ablation studio</a> · <a href="vision.html">The vision lab</a> · <a href="index.html">Back to the book</a></p>
+</main>
+
+<noscript><p class="wrap">This page needs JavaScript: the board is built from a measured data file.</p></noscript>
+<script src="assets/text.js?v=1"></script>
+</body>
+</html>

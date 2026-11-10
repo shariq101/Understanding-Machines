@@ -1,0 +1,9 @@
+{
+ "outputs": [
+  null,
+  "layer head   prev   self    bos   same   succ  final\n0     0   0.066  0.097  0.152  0.042  0.068  0.013\n0     1   0.068  0.189  0.149  0.030  0.086  0.024\n0     2   0.012  0.094  0.212  0.064  0.081  0.086\n0     3   0.040  0.417  0.116  0.052  0.096  0.092\n1     0   0.066  0.159  0.114  0.049  0.456  0.680\n1     1   0.120  0.264  0.106  0.084  0.105  0.006\n1     2   0.138  0.077  0.170  0.037  0.278  0.105\n1     3   0.067  0.145  0.135  0.052  0.437  0.671",
+  "base accuracy: 0.973  loss: 0.086\nablate L1H0: accuracy=0.806  loss=0.7329\nablate L1H3: accuracy=0.872  loss=0.4508\nablate L0H3: accuracy=0.942  loss=0.1996\nablate L0H2: accuracy=0.960  loss=0.1063",
+  "logit lens, final position:\n layer 1  tokens [6, 7, 8]  probs [0.4248, 0.2878, 0.0792]\n layer 2  tokens [13, 9, 11]  probs [0.9993, 0.0003, 0.0002]",
+  null
+ ]
+}

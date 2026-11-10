@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The ablation studio · The Understanding Machine</title>
+<meta name="description" content="Take a vision transformer apart: remove a head, an MLP, or a whole layer, watch the measured effect on the answer, and put it back. Four views of one experiment, plus what the published language-model ablations found.">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/studio.css">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="topbar"><div class="inner">
+  <a class="brand" href="index.html">The Understanding <span>Machine</span></a>
+  <nav aria-label="Sections">
+    <a href="index.html">Contents</a>
+    <a href="vision.html">Vision lab</a>
+    <a href="studio.html" class="active" aria-current="page">Ablation studio</a>
+    <a href="text.html">Language models</a>
+    <a href="travel.html">The ripple</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="distill.html">Distillation</a>
+  </nav>
+  <div class="tools"><button id="themebtn" type="button" aria-label="Switch between light and dark">Theme</button></div>
+</div></header>
+
+<main class="wide studio">
+  <p class="kicker">Part XVI · the ablation studio</p>
+  <h1>Take the model <i>apart</i>.</h1>
+  <p class="lede">One experiment, four ways to look at it. Remove a head, an MLP, or a whole layer; read what happened to the answer; put it back. Nothing runs in the browser — every state you can reach was measured once on a GPU, and every number on this page is a lookup.</p>
+
+  <div class="rail" id="models" role="tablist" aria-label="Model"></div>
+  <div class="facts" id="facts" aria-live="polite"></div>
+  <p class="backlink"><a href="atlas.html">The same model before any cut — the activation atlas →</a></p>
+
+  <div class="studio-grid">
+    <section class="stage-panel" aria-labelledby="stage-title">
+      <div class="stage-tabs" id="views" role="tablist" aria-label="View"></div>
+      <div class="stage-head">
+        <h2 id="stage-title">The layer board</h2>
+        <div class="stage-actions"><button id="clear" type="button" class="btn-ghost">Clear selection</button></div>
+      </div>
+      <p class="stage-hint" id="stage-hint"></p>
+      <div class="stage" id="stage"></div>
+      <p class="stage-note" id="stage-note"></p>
+    </section>
+
+    <aside class="output" id="output" aria-live="polite" aria-label="Measured effect"></aside>
+  </div>
+
+  <p class="method"><b>What “remove” means here.</b> Replacing a node does not delete it from the graph. The node keeps its shape and is fed the same input, but its write into the residual stream is replaced by the write it produced for a different image. That is the intervention every condition on this page measures. A whole layer is removed the same way: all of its heads and its MLP are replaced at once, which is what the block grid stores.</p>
+
+  <section class="lit" id="literature">
+    <p class="kicker">When the model is too large to run here</p>
+    <h2 class="lit-h">The same question, answered in print</h2>
+    <p class="lit-lede">Four of the studies below are language models we could not fit on the card that ran the vision sweep. Their papers do publish the numbers, and those numbers are copied here from the tables, not read off a figure. The operation is not identical — most of these delete a layer rather than replace its write — and neither is the task, so compare the shape of the result, not the digits.</p>
+
+    <div class="lit-grid">
+      <article class="lit-card">
+        <h3>BERT-base: keep one head, lose nothing</h3>
+        <p class="lit-sub">The change in MNLI-matched accuracy when a layer is reduced to its single best attention head. Twelve layers, twelve tiny numbers.</p>
+        <div class="bert" id="lit-bert"></div>
+        <p class="lit-read" id="lit-bert-read"></p>
+        <p class="lit-source">Michel, Levy &amp; Neubig, <a href="https://arxiv.org/abs/1905.10650" target="_blank" rel="noopener">Are Sixteen Heads Really Better than One?</a> (NeurIPS 2019), Table 3, arXiv:1905.10650v3. The paper reports none of these changes as significant at <var>p</var>&lt;0.01.</p>
+      </article>
+
+      <article class="lit-card">
+        <h3>Llama-2-7B: the layer is mostly its FFN</h3>
+        <p class="lit-sub">Perplexity on 100 PG19 samples when the last block, or one of its two halves, is taken out. Lower is better; the dense model is the dashed line.</p>
+        <div class="lparts" id="lit-llama-parts"></div>
+        <p class="lit-read" id="lit-llama-parts-read"></p>
+        <p class="lit-source">Men et al., <a href="https://arxiv.org/abs/2403.03853" target="_blank" rel="noopener">ShortGPT: Layers in Large Language Models are More Redundant Than You Expect</a> (Findings of ACL 2025), Table 1, arXiv:2403.03853v3. 7.60 → 13.37 for the whole block; attention alone costs 0.05.</p>
+      </article>
+    </div>
+
+    <article class="lit-card wide-card">
+      <h3>Llama-2-7B: the benchmark notices late</h3>
+      <p class="lit-sub">Layers removed in the paper’s own importance order. Perplexity multiplies five times while MMLU barely moves — until the depth runs out.</p>
+      <div class="lprune" id="lit-llama-prune"></div>
+      <p class="lit-read" id="lit-llama-prune-read"></p>
+      <p class="lit-source">ShortGPT, Table 4, arXiv:2403.03853v3: Llama-2-7B-Base, 4-bit GPTQ checkpoint. Ratios 0–27.1% of layers; PPL 8.03 → 40.78; MMLU 43.17 → 43.35. The paper’s unquantized rows are in a different table and do not match these, so only this checkpoint’s numbers are drawn.</p>
+    </article>
+
+    <article class="lit-card wide-card">
+      <h3>Where the cliff is, by family</h3>
+      <p class="lit-sub">The fraction of layers the authors report removing before accuracy collapses toward chance. These are ranges stated in the text, not a measured series, and there is no per-layer curve to draw.</p>
+      <div class="cliffs" id="lit-cliffs"></div>
+      <p class="lit-source">Gromov et al., <a href="https://arxiv.org/abs/2403.17887" target="_blank" rel="noopener">The Unreasonable Ineffectiveness of the Deeper Layers</a>, §4, arXiv:2403.17887v2. The paper’s accuracy results are figures, not tables; only the paragraph-level ranges are quoted here.</p>
+    </article>
+
+    <p class="note"><b>Why these four.</b> Each one answers a question this page can ask of a vision transformer but cannot ask of a 7-billion-parameter language model on a laptop: does a single head matter, does a layer matter more through its attention or its MLP, and how deep can you cut before the benchmark falls over? The BERT result is the same shape as the head atlas here — single heads are nearly free. The Llama result is the same shape as the MLP column here — the feed-forward block carries most of the layer. Neither agreement was engineered; both are what the measurements say.</p>
+  </section>
+
+  <p class="backlink"><a href="vision.html">← The vision lab</a> · <a href="index.html">Back to the book</a></p>
+</main>
+
+<noscript><p class="wrap">This page needs JavaScript: the panels are built from a measured data file.</p></noscript>
+<script src="vision-data.js"></script>
+<script src="assets/studio.js?v=3"></script>
+</body>
+</html>

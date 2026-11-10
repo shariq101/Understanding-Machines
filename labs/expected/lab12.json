@@ -1,0 +1,10 @@
+{
+ "outputs": [
+  null,
+  "top heads by successor + final attention:\n  L1H0  succ=0.456  final=0.680\n  L1H3  succ=0.437  final=0.671\n  L1H2  succ=0.278  final=0.105",
+  "behaviour: accuracy 0.973  loss 0.086\nnecessity: ablate L1H0 -> accuracy 0.806\nnecessity: ablate L1H3 -> accuracy 0.872",
+  "sufficiency: patch layer 1 at the copy target\n  restored fraction: 0.934\ndecodability: probe on layer-1 residual: 1.0",
+  "dictionary: FVU 0.0425  L0 53.6",
+  null
+ ]
+}

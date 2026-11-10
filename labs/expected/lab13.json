@@ -1,0 +1,10 @@
+{
+ "outputs": [
+  null,
+  "loaded checkpoints/clip.pt\nparameters: 50227",
+  "retrieval: {'i2t': 0.778, 't2i': 0.815}\nmodality gap: {'within': 0.938, 'cross': 0.053, 'gap': 0.158}",
+  "linear map cosine: before=0.938 after=0.972",
+  "binding: correct=0.815 colour-swap=0.000 shape-swap=0.185",
+  "mean image norm: 1.0\nmean text norm:  1.0\nwithin-pair cosine: 0.938\ncross-pair cosine:  0.053"
+ ]
+}

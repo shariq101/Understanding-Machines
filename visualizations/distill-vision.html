@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Two distilled DeiTs, block by block · The Understanding Machine</title>
+<meta name="description" content="DeiT-base-distilled and DeiT-small-distilled, both students of RegNetY-16GF, measured with 336 mean-ablation conditions, ripple, component CKA, four attention/MLP cross-CKA matrices, and a measured RegNetY-16GF teacher check.">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/distill.css">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="topbar"><div class="inner">
+  <a class="brand" href="index.html">The Understanding <span>Machine</span></a>
+  <nav aria-label="Sections">
+    <a href="index.html">Contents</a>
+    <a href="vision.html">Vision lab</a>
+    <a href="studio.html">Ablation studio</a>
+    <a href="text.html">Language models</a>
+    <a href="travel.html">The ripple</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="distill.html">Distillation</a>
+  </nav>
+  <div class="tools"><button id="themebtn" type="button" aria-label="Switch between light and dark">Theme</button></div>
+</div></header>
+
+<main class="wide distill">
+  <p class="kicker">Part XVI · Vision distillation</p>
+  <h1>What the smaller DeiT <i>kept</i>.</h1>
+  <p class="lede">DeiT-base-distilled and DeiT-small-distilled have the same twelve ViT blocks, patch size 16 and 224-pixel input, but different widths and head counts. Both are published students of RegNetY-16GF, not of each other: the base is not the small model’s teacher, and neither checkpoint contains the RegNet weights. This page therefore calls them the <b>reference</b> and the <b>distilled</b> model, never teacher and student. It measures 336 mean-ablation conditions across the two — every head, attention write, MLP, layer norm and whole block — on twenty Imagenette images, two per class, plus ripple at the class token, CKA over the 196 patch tokens, and four attention/MLP cross-CKA matrices. The actual RegNetY-16GF teacher is now run on the same bank for output and pooled-feature checks; it is not retrained. Nothing runs in the browser.</p>
+
+  <div class="facts" id="facts" aria-live="polite"></div>
+
+  <section class="teacher-block">
+    <h2>The teacher, actually run</h2>
+    <p class="sub">The missing leg was the teacher itself. RegNetY-16GF is loaded from the DeiT authors’ timm checkpoint <code>regnety_160.deit_in1k</code> on the same twenty images and compared with both DeiT checkpoints: ten-way candidate accuracy, full 1000-way and ten-way KL/TV, agreement, confidence, and linear CKA between its pooled feature and each student’s class token at every block. The teacher is not retrained, ablated, or used to identify a causal circuit. The CKA is an image-level check over only twenty images, with a permutation null for the best layer.</p>
+    <div id="teacher-check"></div>
+  </section>
+
+  <section class="stacks" aria-label="Layer effects">
+    <div class="stack" id="stack-teacher"></div>
+    <div class="stack" id="stack-student"></div>
+  </section>
+  <p class="scale" id="scale"></p>
+
+  <section class="cka-block">
+    <h2>Which reference block each distilled block resembles</h2>
+    <p class="sub">Linear CKA between every distilled block and every reference block, over the 196 patch-token representations in the twenty-image bank. One means the two organize the same patches identically up to an orthogonal transform; zero means no linear agreement. The pair has equal depth, so the outlined cell is the same-index reference layer. A high diagonal means the smaller model preserved the stage; an off-diagonal maximum is reported but is not treated as a layer shift, because the residual stream accumulates and adjacent ViT blocks are highly correlated.</p>
+    <div class="cka-wrap" id="cka"></div>
+    <p class="cka-read" id="cka-read"></p>
+  </section>
+
+  <section class="causal-block">
+    <h2>Does the match survive ablation?</h2>
+    <p class="sub">CKA is measured on a clean pass; a functional correspondence should also predict where damage lands. For each distilled block, its twenty whole-block KL values are correlated with each reference block’s twenty, after removing each layer’s mean and each image’s mean. This is an intervention fingerprint, not causal identification: it asks whether two blocks fail on the same images, not whether one computes the other.</p>
+    <div id="causal"></div>
+    <p class="cka-read" id="causal-read"></p>
+  </section>
+
+  <section class="parts-block">
+    <h2>Which component carries it?</h2>
+    <p class="sub">A whole-block fingerprint can hide two different failures: attention may stop routing the same patches while the MLP still writes the same feature, or the reverse. This repeats the damage comparison separately for the attention write and the MLP write, with a permutation null over image order. Below it, the best CKA partner is shown separately for the residual stream, the attention write and the MLP write.</p>
+    <div id="parts"></div>
+    <p class="cka-read" id="parts-read"></p>
+    <div id="cka-parts"></div>
+  </section>
+
+  <section class="borrow-block">
+    <h2>Which <i>part</i> of the reference was copied?</h2>
+    <p class="sub">A layer match does not say whether the smaller model’s attention learned the larger model’s attention or its MLP. Four cross-component matrices answer that directly: distilled attention against reference attention, distilled attention against reference MLP, distilled MLP against reference attention, and distilled MLP against reference MLP. Each row lets a write choose either component at any depth. Same-kind wins support component-specific borrowing; cross-kind wins are the places where “the smaller model copied the larger one’s attention” is too simple. This is a sibling comparison — both copied RegNet, not each other — so nothing here identifies what either learned from the actual teacher.</p>
+    <div id="borrow"></div>
+    <p class="cka-read" id="borrow-read"></p>
+  </section>
+
+  <section class="gap-block">
+    <h2>Where the class bets diverge</h2>
+    <p class="sub">Both models classify the same twenty images. The bar is total variation between the two 1000-way distributions over the union of their top ten labels; the labels are each model’s own top choice. Small gaps mean the smaller checkpoint preserved the output; large ones show where width and head count changed the bet. These are base checkpoints, so the labels are ImageNet classes and Imagenette is a ten-class subset — no fine-tuning accuracy is claimed.</p>
+    <div class="gap-list" id="gap"></div>
+  </section>
+
+  <section class="theory">
+    <h2>The idea, and what it costs</h2>
+    <p>DeiT distills a convolutional teacher into a vision transformer with a distillation token and a hard-label objective: the student sees the teacher’s predicted class as a target, in addition to the ground-truth label. Touvron et al. (2021) released checkpoints trained this way. Both models on this page are from that family, and both were distilled from RegNetY-16GF. They are not a compression pair: the small model was trained separately, with six heads and a 384-wide residual stream, rather than pruned from the base.</p>
+    <p>The comparison is therefore a scale check within one distillation recipe. It can show which computations survive when the student is made smaller, and whether the smaller model’s components remain closest to the same component of the larger one. The teacher check above adds the missing output and pooled-feature comparison, but a match between two students is still not evidence about what either learned from RegNet. The teacher is run for measurement, not retraining or circuit ablation.</p>
+
+    <h3>Why component cross-CKA</h3>
+    <p>Attention and the MLP are different objects. Attention mixes information across patches; the MLP rewrites each patch independently. A smaller student can preserve the larger model’s attention geometry while replacing its MLP with a different feature map, or the reverse. The four cross matrices make that choice visible. A distilled attention write whose best match is a reference MLP write is not evidence that attention copied attention, however high the number. The borrowing table reports both the winning kind and the winning depth, so a same-kind win at an unexpected depth is distinguishable from a cross-kind win.</p>
+
+    <h3>What CKA can and cannot say</h3>
+    <p>Linear CKA (Kornblith et al., 2019) compares two representation matrices by the similarity of their Gram matrices. It is invariant to orthogonal transforms and isotropic scaling, but not to arbitrary nonlinear remapping, and a high value does not prove that one layer computes the other’s function. Measuring it separately for the residual stream, the attention write and the MLP write asks whether the similarity lives in one component or only in their sum. The cross matrices go one step further, but they remain a clean-pass representation measurement; they do not establish a causal copy.</p>
+
+    <h3>What this page measured, and what it did not</h3>
+    <p>The intervention is mean ablation: a component’s write at every token position is replaced by its average over the twenty images. The readout is the 1000-way class distribution at the class token, and both models are the base checkpoints — no fine-tuning, no augmented test set, no downstream segmentation. CKA is measured on the same images used for the ablations, so the correspondence and the intervention effects are not independent evidence. The actual RegNetY-16GF teacher is run separately for output fidelity and an image-level feature CKA; it is not ablated or retrained, and the twenty images are two per class from a single Imagenette validation folder.</p>
+    <p><b>Bank stability.</b> The original ten-image run gave attention 12/12 and MLP 8/12 same-kind, with the four cross-kind MLP wins at L5–L8; its same-index CKA ran from 0.94 to 0.42 and its mean top-10 TV was 0.066. Adding the second image per class leaves the 12/12 and 8/4 split and the L5–L8 crossover unchanged; CKA runs from 0.94 to 0.41 and mean TV is 0.071. The extra images come from the same Imagenette validation folder, so this is a bank-size check, not an independent dataset.</p>
+  </section>
+
+  <section class="method">
+    <h2>Method</h2>
+    <p><b>Images.</b> Twenty Imagenette 320 validation images, two per class, resized and normalized by each model’s processor. <b>Intervention.</b> Mean ablation at every non-pad token position: the node still runs, but its write is replaced by its mean over the bank. <b>Readout.</b> KL divergence between the clean and ablated 1000-way class distributions at the class token, plus the probability of the clean top-1 and the top five labels. <b>Components.</b> Concatenated attention write, each head separately (twelve in the base, six in the small), MLP write, both layer norms, and the whole block. <b>Correspondence.</b> Linear CKA over the 196 patch tokens, on the clean pass, for the residual stream, attention write, MLP write and the four attention/MLP cross pairs. <b>Teacher check.</b> RegNetY-16GF clean logits and pooled feature on the same twenty images; full/10-way KL and TV to each student, agreement, confidence, and image-level CKA against the student class token at every block with a 200-permutation null. <b>Hardware.</b> One T4, float32.</p>
+    <p class="limits"><b>Limits.</b> Twenty images, one intervention family, one checkpoint per scale. Mean ablation removes image-specific signal but not the component itself, so a small KL does not mean the block is unnecessary — only that its average write is close to sufficient for these images. CKA compares geometry, not computation; the damage fingerprint is descriptive and its permutation null is reported on the page. Both models are students of RegNetY-16GF; the teacher is run for output and pooled-feature checks, but not retrained or ablated, so this is still not a causal teacher–student attribution result.</p>
+  </section>
+
+  <section class="refs">
+    <h2>References</h2>
+    <p>Touvron, Cord, Douze, Massa, Sablayrolles &amp; Jégou, <a href="https://arxiv.org/abs/2012.12877" target="_blank" rel="noopener">Training data-efficient image transformers &amp; distillation through attention</a> (2021), arXiv:2012.12877.</p>
+    <p>Dosovitskiy et al., <a href="https://arxiv.org/abs/2010.11929" target="_blank" rel="noopener">An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</a> (2021), arXiv:2010.11929.</p>
+    <p>Kornblith, Norouzi, Lee &amp; Hinton, <a href="https://arxiv.org/abs/1905.00414" target="_blank" rel="noopener">Similarity of Neural Network Representations Revisited</a> (2019), arXiv:1905.00414.</p>
+    <p>Fast AI, <a href="https://github.com/fastai/imagenette" target="_blank" rel="noopener">Imagenette</a>: a ten-class subset of ImageNet used for the image bank.</p>
+  </section>
+
+  <p class="crosslink">The depth-compressed language study is <a href="distill-tiny.html">BERT-base → TinyBERT 4L/312D</a>; the equal-depth reasoning study is <a href="distill-qwen.html">Qwen2.5-Math → DeepSeek-R1-Distill-Qwen</a>.</p>
+  <p class="backlink"><a href="distill.html">← BERT and DistilBERT</a> · <a href="distill2.html">The RoBERTa scale check</a> · <a href="distill-qwen.html">The Qwen reasoning pair</a> · <a href="index.html">Back to the book</a></p>
+</main>
+
+<noscript><p class="wrap">This page needs JavaScript: the two stacks are drawn from a measured data file.</p></noscript>
+<script src="distill-vision-data.js"></script>
+<script src="assets/distill.js?v=9"></script>
+</body>
+</html>

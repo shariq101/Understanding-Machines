@@ -1,0 +1,86 @@
+/* The activation atlas: a layer-by-layer grid of measured hidden values.
+   Columns are layers, rows are dimensions (vision) or heads (language), and
+   every cell is a canvas drawn from a quantized forward pass. */
+
+.atlas .controls{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin:30px 0 4px}
+.atlas .seg{display:inline-flex;border:1px solid var(--rule);background:var(--paper)}
+.atlas .seg button{font:500 12px/1 var(--sans);letter-spacing:.04em;padding:9px 14px;border:0;background:none;color:var(--muted);cursor:pointer}
+.atlas .seg button + button{border-left:1px solid var(--rule)}
+.atlas .seg button.on{background:var(--ink);color:var(--paper)}
+.atlas .rail{margin:0}
+.atlas .facts{margin:10px 0 0}
+
+.fig-scroll{overflow-x:auto;overflow-y:hidden;margin-top:22px;padding:20px 0 12px;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  scrollbar-color:var(--rule) transparent}
+.fig-inner{position:relative;display:flex;align-items:flex-start;gap:26px;min-width:max-content;padding:2px 6px}
+.fig-inner svg.links{position:absolute;inset:0;z-index:0;overflow:visible;pointer-events:none}
+.fig-inner svg.links path{fill:none;stroke:var(--ink);stroke-opacity:.13;stroke-width:.7}
+
+.fig-input{position:sticky;left:0;z-index:3;flex:0 0 auto;width:118px;padding:2px 14px 2px 2px;background:var(--paper)}
+.fig-input img{display:block;width:112px;height:112px;object-fit:cover;border:1px solid var(--rule);image-rendering:auto}
+.fig-input .cap{font:400 10px/1.4 var(--sans);color:var(--muted);margin-top:6px;letter-spacing:.03em}
+.chan{display:flex;gap:7px;margin-top:12px}
+.chan figure{margin:0;text-align:center}
+.chan canvas{display:block;width:32px;height:32px;border:1px solid var(--rule)}
+.chan figcaption{font:400 9px/1.4 var(--sans);color:var(--muted);margin-top:3px}
+
+.prompt{font:400 15px/1.55 var(--serif);color:var(--ink);max-width:170px}
+.prompt b{font-weight:600}
+.prompt .n{display:block;font:400 10px/1.5 var(--sans);color:var(--muted);margin-top:8px;letter-spacing:.03em}
+
+.cols{display:flex;align-items:flex-start;gap:20px;z-index:1}
+.col{display:flex;flex-direction:column;align-items:center}
+.col h4{font:600 9px/1.2 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 6px;white-space:nowrap}
+.cells{display:flex;flex-direction:column;gap:6px}
+.cell{width:var(--cell,54px);height:var(--cell,54px);border:1px solid var(--rule);background:var(--paper);position:relative}
+.cell canvas{display:block;width:100%;height:100%}
+.cell.tip:hover::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);
+  background:var(--ink);color:var(--paper);font:400 10px/1.3 var(--sans);padding:3px 6px;white-space:nowrap;z-index:6}
+
+.cbar{width:var(--cell,54px);margin-top:7px}
+.cbar i{display:block;height:3px;background:linear-gradient(90deg,#2b62a8,#f7f4ee,#b03a2e)}
+.cbar span{display:block;margin-top:3px;font:400 8.5px/1.2 var(--sans);color:var(--muted);text-align:center;letter-spacing:.02em}
+
+.fig-out{flex:0 0 auto;min-width:158px;padding:18px 4px 0 10px;z-index:2;background:var(--paper)}
+.fig-out h4{font:600 9px/1.2 var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.out-list{display:flex;flex-direction:column;gap:9px}
+.out-row{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font:400 12px/1.25 var(--sans);color:var(--ink)}
+.out-row .p{font-variant-numeric:tabular-nums;color:var(--muted);font-size:11px}
+.out-bar{grid-column:1 / -1;height:3px;background:var(--paper3);margin-top:2px}
+.out-bar i{display:block;height:100%;background:var(--ox)}
+.out-note{font:400 11px/1.5 var(--sans);color:var(--muted);max-width:150px}
+
+.legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:14px 0 0;font:400 11px/1.4 var(--sans);color:var(--muted)}
+.legend .ramp{width:150px;height:6px;background:linear-gradient(90deg,#2b62a8,#f7f4ee,#b03a2e)}
+.legend .ramp.seq{background:linear-gradient(90deg,#f7f4ee,#2b62a8)}
+.legend .keys{display:flex;gap:6px;align-items:center}
+.legend .keys i{width:9px;height:9px;background:var(--paper3);border:1px solid var(--rule);display:inline-block}
+
+.atlas .stage-note{margin-top:14px}
+.atlas .method{margin-top:26px}
+
+.atlas .rail{display:flex;gap:8px;flex-wrap:wrap}
+.atlas .pill{font:500 12px/1 var(--sans);padding:9px 12px;border:1px solid var(--rule);background:var(--paper);color:var(--muted);cursor:pointer;border-radius:0}
+.atlas .pill:hover{color:var(--ink);border-color:var(--ink)}
+.atlas .pill.on{background:var(--paper3);color:var(--ink);border-color:var(--ink)}
+.atlas .stage-note{font:400 12.5px/1.6 var(--sans);color:var(--muted);max-width:78ch}
+
+.imgpick{display:flex;align-items:center;gap:6px;margin:4px 0 0;min-height:0}
+.imgpick:empty{display:none}
+.ipick{font:500 11px/1 var(--sans);padding:7px 11px;border:1px solid var(--rule);background:var(--paper);color:var(--muted);cursor:pointer}
+.ipick.on{background:var(--paper3);color:var(--ink);border-color:var(--ink)}
+.ipick-note{font:400 10.5px/1.4 var(--sans);color:var(--muted);margin-left:4px}
+
+.pending{border:1px solid var(--rule);padding:18px 20px;background:var(--paper2);font:400 14px/1.6 var(--serif)}
+.pending code{font-size:12px}
+
+@media (max-width:760px){
+  .atlas .controls{gap:14px}
+  .fig-input{width:92px}
+  .fig-input img{width:88px;height:88px}
+  .chan canvas{width:24px;height:24px}
+  .cell{--cell:40px}
+  .cols{gap:14px}
+  .fig-out{min-width:132px}
+}

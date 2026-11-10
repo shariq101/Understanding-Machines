@@ -1,0 +1,6 @@
+numpy>=1.26
+torch>=2.2
+matplotlib>=3.8
+reportlab>=4.0
+markdown>=3.5
+PyPDF2>=3.0

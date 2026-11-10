@@ -1,0 +1,8 @@
+{
+ "outputs": [
+  null,
+  "AND  w=[0.2 0.1]  b=-0.2  accuracy=1.00\nOR   w=[0.2 0.2]  b=-0.1  accuracy=1.00\nXOR  w=[0. 0.]  b=+0.0  accuracy=0.50",
+  null,
+  "midpoint label in XOR: -1.0\nhalf-space is convex: a positive region containing (0,1) and (1,0)\nmust contain their midpoint (0.5, 0.5), whose XOR label is -1"
+ ]
+}

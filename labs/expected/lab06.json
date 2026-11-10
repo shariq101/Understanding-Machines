@@ -1,0 +1,9 @@
+{
+ "outputs": [
+  null,
+  "max |numpy - torch|: 1.67e-07",
+  "attention rows sum to 1: True\nfirst row: [0.112 0.097 0.148 0.191 0.19  0.261]",
+  "causal mask, upper triangle is exactly zero: True\ncausal row 3: [0.133 0.582 0.151 0.133 0.    0.   ]",
+  null
+ ]
+}

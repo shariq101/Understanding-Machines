@@ -1,0 +1,9 @@
+{
+ "outputs": [
+  null,
+  "parameters  CNN: 1762  ViT: 18338\nclean accuracy  CNN: 1.0  ViT: 1.0",
+  "occluder 5x5  CNN: 0.913  ViT: 0.883\noccluder 7x7  CNN: 0.830  ViT: 0.757",
+  "class-token attention, last layer: [0.046, 0.033, 0.04, 0.043, 0.041, 0.222, 0.044, 0.046, 0.036, 0.063, 0.15, 0.04, 0.034, 0.05, 0.031, 0.04]\nnormalized entropy: 2.534 of 2.773 maximum",
+  null
+ ]
+}

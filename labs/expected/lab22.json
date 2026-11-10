@@ -1,0 +1,10 @@
+{
+ "outputs": [
+  null,
+  "scenes: 600  neurons per layer: 128",
+  "activation matrix: (600, 128)",
+  "neuron  colour  purity  stability  score\n   126  red      1.000      1.000  1.000\n   124  red      1.000      1.000  1.000\n   123  red      1.000      1.000  1.000\n   121  blue     1.000      1.000  1.000\n   116  green    1.000      1.000  1.000\n   112  blue     1.000      1.000  1.000\n   110  blue     1.000      1.000  1.000\n   109  red      1.000      1.000  1.000",
+  "description: colour=red | purity 1.0 | stability 1.0\nneurons with the same description: [126, 124, 123, 109, 103, 102, 97, 95]\ncolour accuracy: base 1.0 | described ablation 1.0 | random control 1.0 | whole layer 0.945",
+  "claim ledger\n establishes: the descriptions are stable on held-out scenes, but ablating the described subset does not change the answer\n establishes: ablating all 128 layer-0 neurons costs 0.055, so the layer contributes; the described subset does not localize it\n does not establish: that the label is the unit's function, or that the effect transfers\n next control: ablate a matched set of neurons whose top scenes have a different colour"
+ ]
+}

@@ -1,0 +1,10 @@
+{
+ "outputs": [
+  null,
+  "",
+  "length  p=0.99  p=0.97  p=0.90\n     4   0.960   0.903   0.673\n     8   0.920   0.800   0.523\n    16   0.837   0.600   0.173\n    32   0.713   0.370   0.047",
+  "checkpoint  success  extra calls\n         0    0.613          0.0\n         4    0.583         16.0\n         2    0.567         16.0\n\nverifier q  success\n      0.90    0.987\n      0.99    1.000",
+  "mode   success\ntool     0.643\nmodel    0.060",
+  "argument error rate  success\n               0.00    1.000\n               0.02    0.787\n               0.10    0.300"
+ ]
+}

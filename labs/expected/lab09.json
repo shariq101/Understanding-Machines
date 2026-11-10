@@ -1,0 +1,8 @@
+{
+ "outputs": [
+  null,
+  "probe: token identity at layer 1, final position\n  accuracy: 1.0  classes: 16",
+  "patch layer 0: before=-8.30  after=+10.72  clean=+10.72  restored=1.000\npatch layer 1: before=-8.30  after=+9.47  clean=+10.72  restored=0.934",
+  null
+ ]
+}

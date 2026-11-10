@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A 4-layer TinyBERT against its teacher · The Understanding Machine</title>
+<meta name="description" content="BERT-base and TinyBERT 4L/312D, the published teacher and student, measured with 272 mean-ablation conditions, ripple, component CKA and four attention/MLP cross-CKA matrices.">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/distill.css">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="topbar"><div class="inner">
+  <a class="brand" href="index.html">The Understanding <span>Machine</span></a>
+  <nav aria-label="Sections">
+    <a href="index.html">Contents</a>
+    <a href="vision.html">Vision lab</a>
+    <a href="studio.html">Ablation studio</a>
+    <a href="text.html">Language models</a>
+    <a href="travel.html">The ripple</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="distill.html">Distillation</a>
+  </nav>
+  <div class="tools"><button id="themebtn" type="button" aria-label="Switch between light and dark">Theme</button></div>
+</div></header>
+
+<main class="wide distill">
+  <p class="kicker">Part XVI · BERT distillation</p>
+  <h1>What four layers <i>kept</i>.</h1>
+  <p class="lede">BERT-base has twelve blocks, 768 hidden dimensions and 109.5M parameters. TinyBERT 4L/312D has four blocks, 312 hidden dimensions and 14.4M, and is the published general-purpose student of that teacher. This is a real teacher–student pair, not a base checkpoint compared with a fine-tune of itself. Both are taken apart with the same mean ablation — every block write, every individual head, both layer norms, attention and MLP — on 25 masked-LM prompts. CKA is computed for the residual stream, the attention write and the MLP write. Four cross-component matrices then ask a narrower question than “which layer matches”: whether a student’s attention is closer to the teacher’s attention or to its MLP, and the same for the student’s MLP. Nothing runs in the browser.</p>
+
+  <div class="facts" id="facts" aria-live="polite"></div>
+  <p class="crosslink"><b>Read this first.</b> The released general TinyBERT checkpoint has an untrained masked-LM head: its output bias is exactly zero, its transform is at initialization scale, and its logits are near uniform (entropy 10.2). It predicts <code>www</code> and <code>https</code> at 0.05% rather than the missing content word. The KL and “damage” numbers below therefore use a fixed random head as a probe of the encoder; they are not a language-output or accuracy comparison. The residual, attention, MLP and cross-component CKA sections do not use that head. A separate four-way AG News probe, trained on frozen encoder features, is reported below; it is a task readout, not a repaired language head.</p>
+
+  <section class="probe-block">
+    <h2>A readout that is actually trained</h2>
+    <p class="sub">The released MLM head is unusable, but the encoder can still be scored on a task. A linear four-way AG News classifier is trained independently on frozen CLS features for each encoder — 2,000 training headlines, 512 held-out headlines — and its output distributions are compared. This does not restore the missing language head or validate the masked-token KL; it is a clean, supervised readout of the representations these blocks produce.</p>
+    <div id="probe"></div>
+    <p class="cka-read" id="probe-read"></p>
+  </section>
+
+  <section class="stacks" aria-label="Layer effects">
+    <div class="stack" id="stack-teacher"></div>
+    <div class="stack" id="stack-student"></div>
+  </section>
+  <p class="scale" id="scale"></p>
+
+  <section class="cka-block">
+    <h2>Which teacher layer each student block resembles</h2>
+    <p class="sub">Linear CKA between every one of the four student blocks and every one of the twelve teacher blocks, over all non-pad token representations in the 25-prompt bank. One means the two organize the same tokens identically up to an orthogonal transform; zero means no linear agreement. This pair has four blocks against twelve, so an off-diagonal maximum is expected: a compressed student has to make one block carry more of the pipeline. The outlined cell is the residual-CKA argmax, not a same-index partner, because there is no same-index partner for most student blocks.</p>
+    <div class="cka-wrap" id="cka"></div>
+    <p class="cka-read" id="cka-read"></p>
+  </section>
+
+  <section class="causal-block">
+    <h2>Does the match survive ablation?</h2>
+    <p class="sub">CKA is measured on a clean pass; a functional correspondence should also predict where damage lands. For each student block, its four whole-block KL values are correlated with each teacher block’s 25, after removing each layer’s mean and each prompt’s mean. This is an intervention fingerprint, not causal identification: it asks whether two blocks fail on the same prompts, not whether one computes the other.</p>
+    <div id="causal"></div>
+    <p class="cka-read" id="causal-read"></p>
+  </section>
+
+  <section class="parts-block">
+    <h2>Which component carries it?</h2>
+    <p class="sub">A whole-block fingerprint can hide two different failures: attention may stop routing the same way while the MLP still writes the same feature, or the reverse. This repeats the damage comparison separately for the attention write and the MLP write, with a permutation null over prompt order. Below it, the best CKA partner is shown separately for the residual stream, the attention write and the MLP write.</p>
+    <div id="parts"></div>
+    <p class="cka-read" id="parts-read"></p>
+    <div id="cka-parts"></div>
+  </section>
+
+  <section class="borrow-block">
+    <h2>Which <i>part</i> of the teacher was copied?</h2>
+    <p class="sub">Matching whole layers cannot distinguish “student attention learned teacher attention” from “student attention learned teacher MLP.” Four cross-component CKA matrices answer that directly: student attention against teacher attention, student attention against teacher MLP, student MLP against teacher attention, and student MLP against teacher MLP. For each student block the table reports its best residual partner and the best partner for each write, allowing the write to choose either teacher component at any depth. Same-kind wins are evidence for component-specific borrowing; cross-kind wins are where the simple layer-mapping story breaks.</p>
+    <div id="borrow"></div>
+    <p class="cka-read" id="borrow-read"></p>
+  </section>
+
+  <section class="gap-block">
+    <h2>Why the MLM output is not compared</h2>
+    <p class="sub">The teacher’s MLM head is trained; the TinyBERT checkpoint’s head is not. Its output bias is all zeros, its transform is near initialization scale, and the masked-token distribution is almost uniform (entropy 10.2), with <code>www</code> and <code>https</code> on top. Reporting a teacher–student gap here would compare a trained language head with a random one, so it is not reported. The ablation KL above still uses the student’s fixed head: read it as a random-probe sensitivity of the encoder, not as language loss. The trained four-way probe above is the valid task readout. The representation, intervention-profile and cross-CKA measurements are unaffected.</p>
+    <div id="gap"></div>
+  </section>
+
+  <section class="theory">
+    <h2>The idea, and what it costs</h2>
+    <p>TinyBERT is trained by transformer distillation: the student is fitted not only to the teacher’s output distribution but to its intermediate representations. Jiao et al. (2020) distill the embedding, the attention matrices, the hidden states and the prediction, and use a layer-mapping function so that a four-layer student can be compared with a twelve-layer teacher. The published 4L/312D general checkpoint is the one measured here. Its teacher is BERT-base, so this page can compare an actual teacher with an actual student; the other pages in this part often cannot.</p>
+    <p>Compression changes the object. A student block is not a copy of one teacher block: with four blocks for twelve, each student block has to absorb several stages, and the residual stream is 312 wide rather than 768. A high CKA value therefore says that the student’s representation is linearly similar to some teacher stage, not that the student implements that stage’s function. The ablation is the second measurement: if the representation match is functional, damaging the matched teacher block and the student block should hurt the same prompts.</p>
+
+    <h3>Why component cross-CKA</h3>
+    <p>Attention and the MLP are different objects. Attention mixes information across positions; the MLP rewrites each position independently. A student can preserve the teacher’s attention geometry while replacing its MLP with a different feature map, or the reverse. The four cross matrices make that choice visible: a student attention write whose best match is a teacher MLP write is not evidence that attention copied attention, however high the number. The borrowing table reports both the winning kind and the winning depth, so a same-kind win at an unexpected depth is distinguishable from a cross-kind win.</p>
+
+    <h3>What CKA can and cannot say</h3>
+    <p>Linear CKA (Kornblith et al., 2019) compares two representation matrices by the similarity of their Gram matrices. It is invariant to orthogonal transforms and isotropic scaling, but not to arbitrary nonlinear remapping, and a high value does not prove that one layer computes the other’s function. Measuring it separately for the residual stream, the attention write and the MLP write asks whether the similarity lives in one component or only in their sum. The cross matrices go one step further, but they remain a clean-pass representation measurement; they do not establish a causal copy.</p>
+
+    <h3>What this page measured, and what it did not</h3>
+    <p>The intervention is mean ablation: a component’s write at every token position is replaced by its average over the prompt bank. The bank is 25 masked-LM sentences. The student’s readout passes through its released MLM head, which is untrained; it is used only as a fixed probe, so this page makes no language-output claim. Both models are the base checkpoints — no GLUE fine-tuning, no task head, no chat template. CKA is measured on the same prompts used for the ablations, so the correspondence and the intervention effects are not independent evidence. The teacher is real, but the student is one published checkpoint; this is not a sweep over TinyBERT variants or over distillation temperatures.</p>
+  </section>
+
+  <section class="method">
+    <h2>Method</h2>
+    <p><b>Prompts.</b> 25 masked-LM sentences, one mask at the end. <b>Intervention.</b> Mean ablation at every non-pad token position: the node still runs, but its write is replaced by its mean over the bank. <b>Readout.</b> KL divergence through the checkpoint’s fixed MLM head, whose output bias is zero and whose logits are near uniform; this is a random-probe sensitivity, not language loss. The readout is recorded with the clean top-1 and top five tokens for audit. <b>Components.</b> Concatenated attention write, each of the twelve heads separately, MLP write, input layer norm, post-attention layer norm, and the whole block. <b>Correspondence.</b> Linear CKA over every non-pad token representation, on the clean pass, for the residual stream, attention write, MLP write and the four attention/MLP cross pairs. <b>Hardware.</b> One T4, float32.</p>
+    <p class="limits"><b>Limits.</b> Masked-LM readout, 25 prompts, one intervention family. Mean ablation removes input-specific signal but not the component itself, so a small KL does not mean the block is unnecessary — only that its average write is close to sufficient for these prompts. CKA compares geometry, not computation; the damage fingerprint is descriptive and its permutation null is reported on the page. The student is the general 4L/312D checkpoint, not a task-distilled TinyBERT, and no downstream accuracy is claimed.</p>
+  </section>
+
+  <section class="refs">
+    <h2>References</h2>
+    <p>Jiao et al., <a href="https://arxiv.org/abs/1909.10351" target="_blank" rel="noopener">TinyBERT: Distilling BERT for Natural Language Understanding</a> (2020), arXiv:1909.10351.</p>
+    <p>Devlin, Chang, Lee &amp; Toutanova, <a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a> (2019), arXiv:1810.04805.</p>
+    <p>Hinton, Vinyals &amp; Dean, <a href="https://arxiv.org/abs/1503.02531" target="_blank" rel="noopener">Distilling the Knowledge in a Neural Network</a> (2015), arXiv:1503.02531.</p>
+    <p>Kornblith, Norouzi, Lee &amp; Hinton, <a href="https://arxiv.org/abs/1905.00414" target="_blank" rel="noopener">Similarity of Neural Network Representations Revisited</a> (2019), arXiv:1905.00414.</p>
+    <p>Voita, Talbot, Moiseev, Sennrich &amp; Titov, <a href="https://arxiv.org/abs/1905.09418" target="_blank" rel="noopener">Analyzing Multi-Head Self-Attention: Specialized Heads Do the Heavy Lifting, the Rest Can Be Pruned</a> (2019), arXiv:1905.09418.</p>
+    <p>Geva, Schuster, Berant &amp; Levy, <a href="https://arxiv.org/abs/2012.14913" target="_blank" rel="noopener">Transformer Feed-Forward Layers Are Key-Value Memories</a> (2021), arXiv:2012.14913.</p>
+  </section>
+
+  <p class="crosslink">The equal-depth reasoning pair is <a href="distill-qwen.html">Qwen2.5-Math → DeepSeek-R1-Distill-Qwen</a>. The visual sibling study is <a href="distill-vision.html">DeiT-base → DeiT-small</a>.</p>
+  <p class="backlink"><a href="distill.html">← BERT and DistilBERT</a> · <a href="distill2.html">The RoBERTa scale check</a> · <a href="distill-qwen.html">The Qwen reasoning pair</a> · <a href="index.html">Back to the book</a></p>
+</main>
+
+<noscript><p class="wrap">This page needs JavaScript: the two stacks are drawn from a measured data file.</p></noscript>
+<script src="distill-tiny-data.js"></script>
+<script src="assets/distill.js?v=8"></script>
+</body>
+</html>

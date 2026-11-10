@@ -1,0 +1,9 @@
+{
+ "outputs": [
+  null,
+  "synthetic   FVU: 0.0227  L0: 8.6  of 64",
+  "model MLP   FVU: 0.035  L0: 49.4  of 256",
+  "top-20 features, mean purity by top token: 0.267",
+  null
+ ]
+}

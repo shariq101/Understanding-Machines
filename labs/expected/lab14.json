@@ -1,0 +1,9 @@
+{
+ "outputs": [
+  null,
+  "loaded checkpoints/vlm.pt\ntrainable parameters: 144512\naccuracy: 0.912\nby question: {'color': 1.0, 'shape': 0.74, 'position': 1.0}",
+  "layer 1 [('red', 0.9569), ('triangle', 0.0328), ('circle', 0.0062), ('square', 0.0038)]\nlayer 2 [('red', 0.9498), ('triangle', 0.0354), ('circle', 0.0088), ('square', 0.0056)]\nlayer 3 [('red', 0.999), ('triangle', 0.0005), ('circle', 0.0002), ('square', 0.0002)]\nlayer 4 [('red', 0.9998), ('square', 0.0001), ('circle', 0.0001), ('green', 0.0)]",
+  "base colour accuracy: 1.0\nlargest drops: [(10, 0.918), (11, 0.961), (12, 0.961), (16, 0.98), (9, 0.996)]",
+  "left image mass by layer: [0.781, 0.595, 0.443, 0.434] top patches: [9, 10, 11]\ncenter image mass by layer: [0.788, 0.59, 0.453, 0.469] top patches: [11, 10, 0]\nright image mass by layer: [0.788, 0.587, 0.556, 0.776] top patches: [11, 10, 0]"
+ ]
+}

@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feature Microscope · InceptionV1</title>
+<meta name="description" content="A measured feature microscope for InceptionV1: real images, channel statistics, and spatial activation heatmaps.">
+<link rel="stylesheet" href="assets/microscope.css">
+</head>
+<body>
+<header class="mast">
+  <div class="shell mast-row">
+    <a class="brand" href="index.html">LAB <span>ATLAS</span></a>
+    <div class="crumb">InceptionV1 <b>/</b> feature microscope</div>
+    <a class="back" href="index.html">All studies</a>
+  </div>
+</header>
+
+<main class="shell">
+  <section class="intro">
+    <p class="kicker">A real-image microscope</p>
+    <h1>What makes a neuron<br><em>fire?</em></h1>
+    <p class="lede">A channel’s strongest responses across Imagenette. Each card is a real photograph ranked by the channel’s peak post-ReLU activation; the coloured field is the spatial map that produced the rank.</p>
+    <div class="provenance" id="provenance">Loading the measured index…</div>
+  </section>
+
+  <nav class="layers" id="layers" aria-label="Inception layers"></nav>
+
+  <div class="workbench">
+    <aside class="rail">
+      <div class="rail-head">
+        <div>
+          <p class="mini">Channels</p>
+          <p class="rail-count" id="rail-count">—</p>
+        </div>
+        <label class="search"><span>jump</span><input id="jump" type="number" min="0" inputmode="numeric" placeholder="447"></label>
+      </div>
+      <div class="channel-grid" id="channel-grid" role="listbox" aria-label="Channels"></div>
+      <p class="rail-note" id="rail-note"></p>
+    </aside>
+
+    <section class="stage" aria-live="polite">
+      <div class="stage-head">
+        <div>
+          <p class="mini" id="stage-layer">loading</p>
+          <h2 id="stage-channel">channel —</h2>
+        </div>
+        <div class="navpair">
+          <button id="prev" type="button" aria-label="Previous channel">←</button>
+          <button id="next" type="button" aria-label="Next channel">→</button>
+        </div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="labels" id="labels"></div>
+
+      <div class="image-grid" id="images"></div>
+
+      <div class="readout" id="readout"></div>
+
+      <details class="about">
+        <summary>How to read this view</summary>
+        <p>Each image is ranked by the maximum response of this channel anywhere in its spatial map. The number is that maximum; the heatmap is the same channel’s spatial response, rescaled for display. The top-class chips count labels among these five strongest images. This is evidence about what fires the channel, not a causal circuit and not a claim that the channel has only one job.</p>
+      </details>
+    </section>
+  </div>
+
+  <section class="limits">
+    <p><b>What this is.</b> Four hooked InceptionV1 layers, measured with torchvision GoogLeNet on Imagenette2-320. All 512 channels of <code>inception4c</code> are available; the other layers carry their strongest selected channels.</p>
+    <p><b>What this is not.</b> The image bank has ten coarse classes, not ImageNet’s full 1,000. The checkpoint is the standard torchvision GoogLeNet, not Goodfire’s architecture-modified model. A top image is a correlation with the channel, not proof of a causal role.</p>
+  </section>
+</main>
+
+<footer class="foot"><div class="shell"><a href="index.html">← Lab Atlas</a><span>Measured on Kaggle · no model runs in this browser</span></div></footer>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const state = { manifest: null, layer: null, data: null, channel: null };
+  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const fmt = (v) => Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 });
+  const pct = (v) => `${(100 * Number(v)).toFixed(1)}%`;
+
+  function heatColor(t) {
+    t = Math.max(0, Math.min(1, t));
+    // graphite → teal → hot coral → warm yellow
+    const stops = [[15, 29, 37], [18, 109, 104], [218, 91, 62], [244, 196, 96]];
+    const x = t * (stops.length - 1);
+    const i = Math.min(stops.length - 2, Math.floor(x));
+    const f = x - i;
+    const a = stops[i], b = stops[i + 1];
+    return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
+  }
+
+  function drawMap(canvas, map) {
+    const h = map.length, w = map[0].length;
+    const off = document.createElement('canvas');
+    off.width = w; off.height = h;
+    const octx = off.getContext('2d');
+    const image = octx.createImageData(w, h);
+    let lo = Infinity, hi = -Infinity;
+    for (const row of map) for (const v of row) { if (v < lo) lo = v; if (v > hi) hi = v; }
+    const span = Math.max(1e-6, hi - lo);
+    let k = 0;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const rgb = heatColor((map[y][x] - lo) / span);
+      image.data[k++] = rgb[0]; image.data[k++] = rgb[1];
+      image.data[k++] = rgb[2]; image.data[k++] = Math.round(180 + 75 * ((map[y][x] - lo) / span));
+    }
+    octx.putImageData(image, 0, 0);
+    const ctx = canvas.getContext('2d');
+    canvas.width = 448; canvas.height = 448;
+    ctx.imageSmoothingEnabled = true;
+    ctx.clearRect(0, 0, 448, 448);
+    ctx.drawImage(off, 0, 0, 448, 448);
+  }
+
+  function renderLayers() {
+    const nav = $('#layers');
+    nav.innerHTML = state.manifest.layers.map(l => `
+      <button type="button" data-layer="${esc(l.id)}" class="${l.id === state.layer ? 'on' : ''}">
+        <span class="layer-id">${esc(l.goodfire)}</span>
+        <span class="layer-sub">${l.selected} of ${l.channels} channels · ${l.spatial}×${l.spatial}</span>
+      </button>`).join('');
+    nav.querySelectorAll('button').forEach(b => b.addEventListener('click', () => selectLayer(b.dataset.layer)));
+  }
+
+  function renderRail() {
+    const channels = Object.keys(state.data.neurons).map(Number).sort((a, b) => a - b);
+    $('#rail-count').textContent = `${channels.length} selected · ${state.data.channels} total`;
+    $('#rail-note').textContent = state.data.id === 'inception4c'
+      ? 'Every channel in the canonical middle layer is indexed.'
+      : 'The strongest channels by measured maximum activation.';
+    $('#channel-grid').innerHTML = channels.map(c => {
+      const n = state.data.neurons[String(c)];
+      const top = n.top_classes[0]?.label || '';
+      return `<button type="button" role="option" data-channel="${c}" class="${c === state.channel ? 'on' : ''}" title="${esc(top)}">
+        <b>${c}</b><span>${esc(top)}</span>
+      </button>`;
+    }).join('');
+    $('#channel-grid').querySelectorAll('button').forEach(b => b.addEventListener('click', () => selectChannel(Number(b.dataset.channel))));
+    keepChannelVisible();
+  }
+
+  function renderChannel() {
+    const n = state.data.neurons[String(state.channel)];
+    if (!n) return;
+    $('#stage-layer').textContent = `${state.data.goodfire} · ${state.data.layer}`;
+    $('#stage-channel').textContent = `channel ${state.channel}`;
+    const s = n.stats;
+    $('#stats').innerHTML = `
+      <div><span>maximum</span><b>${fmt(s.max)}</b></div>
+      <div><span>99.9th pct</span><b>${fmt(s.p99_9)}</b></div>
+      <div><span>median</span><b>${fmt(s.median)}</b></div>
+      <div><span>active images</span><b>${pct(s.active_fraction)}</b></div>
+      <div class="wide-stat"><span>measured bank</span><b>${fmt(s.images)} images</b></div>`;
+    $('#labels').innerHTML = n.top_classes.map((c, i) =>
+      `<span class="pill ${i === 0 ? 'first' : ''}">${esc(c.label)} <b>${c.count}/${n.images.length}</b></span>`
+    ).join('');
+    $('#images').innerHTML = n.images.map((im, i) => `
+      <figure class="cell">
+        <div class="frame">
+          <img src="microscope/${esc(im.file)}" alt="${esc(im.label)} — top activation for channel ${state.channel}" loading="${i < 2 ? 'eager' : 'lazy'}">
+          <canvas aria-hidden="true"></canvas>
+          <span class="rank">#${i + 1}</span>
+        </div>
+        <figcaption><b>${esc(im.label)}</b><span>${fmt(im.activation)}</span></figcaption>
+      </figure>`).join('');
+    $('#images').querySelectorAll('.frame').forEach((frame, i) => {
+      const im = n.images[i];
+      const img = frame.querySelector('img');
+      const canvas = frame.querySelector('canvas');
+      const draw = () => drawMap(canvas, im.map);
+      if (img.complete) draw(); else img.addEventListener('load', draw, { once: true });
+    });
+    const top = n.top_classes[0];
+    $('#readout').innerHTML = top
+      ? `The strongest five images are mostly <b>${esc(top.label)}</b>. That is a label pattern in a ten-class bank, not a definition of the channel.`
+      : '';
+    document.querySelectorAll('#channel-grid button').forEach(b => b.classList.toggle('on', Number(b.dataset.channel) === state.channel));
+    keepChannelVisible();
+  }
+
+  function keepChannelVisible() {
+    const grid = $('#channel-grid');
+    const active = grid.querySelector('button.on');
+    if (!active) return;
+    const top = active.offsetTop - grid.offsetTop;
+    if (top < grid.scrollTop) grid.scrollTop = top;
+    else if (top + active.offsetHeight > grid.scrollTop + grid.clientHeight) {
+      grid.scrollTop = top + active.offsetHeight - grid.clientHeight;
+    }
+  }
+
+  function selectChannel(c) {
+    if (!state.data.neurons[String(c)]) return;
+    state.channel = c;
+    renderChannel();
+    history.replaceState(null, '', `?layer=${encodeURIComponent(state.layer)}&channel=${c}`);
+  }
+
+  async function selectLayer(id) {
+    state.layer = id;
+    renderLayers();
+    const res = await fetch(`microscope/${encodeURIComponent(id)}.json`);
+    if (!res.ok) throw new Error(`could not load ${id}`);
+    state.data = await res.json();
+    state.data.id = id;
+    const channels = Object.keys(state.data.neurons).map(Number).sort((a, b) => a - b);
+    const wanted = id === 'inception4c' && state.data.neurons['447'] ? 447 : channels[0];
+    state.channel = wanted;
+    renderRail();
+    renderChannel();
+  }
+
+  async function boot() {
+    try {
+      const res = await fetch('microscope/manifest.json');
+      if (!res.ok) throw new Error('manifest missing');
+      state.manifest = await res.json();
+      const m = state.manifest;
+      $('#provenance').innerHTML = `<b>${esc(m.model)}</b><br>${esc(m.dataset)} · ${fmt(m.images)} real images · four hooked layers`;
+      $('#layers').innerHTML = '';
+      const params = new URLSearchParams(location.search);
+      const start = params.get('layer') || 'inception4c';
+      await selectLayer(m.layers.some(l => l.id === start) ? start : m.layers[0].id);
+      if (params.has('channel')) {
+        const requested = Number(params.get('channel'));
+        if (Number.isFinite(requested) && state.data.neurons[String(requested)]) selectChannel(requested);
+      }
+    } catch (err) {
+      $('#provenance').textContent = `The measured index is not available: ${err.message}`;
+      $('#images').innerHTML = '<p class="empty">Run <code>kaggle/microscope/fetch.sh</code> to install the measured data, then serve this folder over HTTP.</p>';
+    }
+    $('#prev').addEventListener('click', () => step(-1));
+    $('#next').addEventListener('click', () => step(1));
+    $('#jump').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        const c = Number(e.target.value);
+        if (state.data?.neurons[String(c)]) selectChannel(c);
+      }
+    });
+  }
+
+  function step(dir) {
+    if (!state.data) return;
+    const channels = Object.keys(state.data.neurons).map(Number).sort((a, b) => a - b);
+    const i = channels.indexOf(state.channel);
+    const next = channels[(i + dir + channels.length) % channels.length];
+    selectChannel(next);
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>

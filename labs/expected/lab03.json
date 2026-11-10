@@ -1,0 +1,10 @@
+{
+ "outputs": [
+  null,
+  "sentences: 2400  vocabulary: 44  nonzero cells: 706\nPPMI is 0.25 dense",
+  "cat     [('dog', 0.9), ('fox', 0.864), ('cow', 0.838), ('horse', 0.83)]\nred     [('white', 0.982), ('black', 0.966), ('green', 0.896), ('blue', 0.879)]\njapan   [('the', 0.274), ('france', 0.247), ('egypt', 0.237), ('canada', 0.228)]\ntokyo   [('city', 0.252), ('dog', 0.181), ('cat', 0.166), ('cairo', 0.122)]\nrice    [('cheese', 0.937), ('bread', 0.745), ('soup', 0.71), ('apple', 0.632)]",
+  "france : paris :: japan : ?\n[('city', 0.225), ('in', 0.079), ('cairo', 0.078)]",
+  null,
+  "nearest-neighbour category match: 15/25 = 0.60"
+ ]
+}

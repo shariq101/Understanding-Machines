@@ -1,0 +1,9 @@
+{
+ "outputs": [
+  null,
+  "",
+  "CLIP ViT: class token\nlayer  colour  shape  position\n    0   0.304  0.293     0.311\n    1   1.000  0.716     0.971\n    2   1.000  0.720     0.982\nCLIP ViT: mean patch token\nlayer  colour  shape  position\n    0   1.000  0.716     0.316\n    1   1.000  0.696     0.891\n    2   1.000  0.667     0.911",
+  "shuffled-label controls at the best layer:\n  colour 0.304\n  shape 0.347\n  position 0.333",
+  "VLM: final text token\nlayer  colour  shape  position\n    0   0.302  0.307     0.329\n    1   0.818  0.458     0.693\n    2   0.916  0.542     0.822\n    3   0.893  0.582     0.818\n    4   0.898  0.618     0.831"
+ ]
+}

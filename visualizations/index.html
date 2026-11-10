@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lab Atlas · Mechanistic Interpretability</title>
+<meta name="description" content="Interactive measurements of transformer circuits and InceptionV1 features: ablation, attention, CKA, probing, distillation, and a real-image feature microscope.">
+<link rel="stylesheet" href="assets/atlas-home.css">
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="topline">
+      <a class="brand" href="index.html">LAB <span>ATLAS</span></a>
+      <span>Measured, not illustrated</span>
+    </div>
+    <p class="kicker">A visual companion to the labs</p>
+    <h1>Open the model.<br><em>Keep the evidence.</em></h1>
+    <p class="lede">Eleven interactive views of transformer circuits and InceptionV1 features, drawn from captured measurements on vision models, language models, and distillation pairs. Every number on these pages came from a run; nothing is a plausible animation.</p>
+    <div class="stats">
+      <span class="stat">24 labs</span>
+      <span class="stat">11 interactive views</span>
+      <span class="stat">Captured JSON data</span>
+      <span class="stat">No model in the browser</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="section-head">
+    <h2>Start with a question</h2>
+    <p>Each view exposes the controls, the measured conditions, and the limits of what the run can support.</p>
+  </div>
+  <div class="grid">
+    <a class="card wide" href="vision.html">
+      <span class="tag">Vision · 5 checkpoints</span>
+      <h3>The vision lab</h3>
+      <p>Open every head and MLP in a ViT-family model, then remove a node or a whole layer and watch the answer move.</p>
+      <span class="foot"><span>192 conditions · T4</span><span class="arrow">↗</span></span>
+    </a>
+    <a class="card wide" href="studio.html">
+      <span class="tag">Ablation · four views</span>
+      <h3>The ablation studio</h3>
+      <p>A clickable layer board, a damage cascade, every contiguous layer run, and the deletion curves together.</p>
+      <span class="foot"><span>Measured interventions</span><span class="arrow">↗</span></span>
+    </a>
+    <a class="card wide" href="microscope.html">
+      <span class="tag">Vision · real images</span>
+      <h3>The feature microscope</h3>
+      <p>Browse all 512 channels of InceptionV1’s middle layer, ranked against real Imagenette photographs. Every card carries the spatial activation map that put it there.</p>
+      <span class="foot"><span>4,320 ranked images · InceptionV1</span><span class="arrow">↗</span></span>
+    </a>
+    <a class="card" href="atlas.html">
+      <span class="tag">Activation atlas</span>
+      <h3>The forward pass</h3>
+      <p>The clean network as a grid: variance-selected hidden dimensions, attention over prompt tokens, and next-token readouts.</p>
+      <span class="foot"><span>One pass per model</span><span class="arrow">↗</span></span>
+    </a>
+    <a class="card" href="text.html">
+      <span class="tag">Language · causal</span>
+      <h3>Remove one head</h3>
+      <p>Mean-ablate a single head, an MLP, or a layer in GPT-2 and read the change in the next-token distribution.</p>
+      <span class="foot"><span>156 nodes · GPT-2</span><span class="arrow">↗</span></span>
+    </a>
+    <a class="card" href="travel.html">
+      <span class="tag">Ripple · depth</span>
+      <h3>Follow a cut</h3>
+      <p>Cut one layer and track how much the residual stream has moved at every later depth.</p>
+      <span class="foot"><span>12 cuts · per-depth</span><span class="arrow">↗</span></span>
+    </a>
+    <a class="card half" href="distill.html">
+      <span class="tag">Distillation · BERT</span>
+      <h3>What survives compression</h3>
+      <p>Compare BERT-base and DistilBERT under the same ablation, then inspect the CKA matrix between their blocks.</p>
+      <span class="foot"><span>12 → 6 blocks</span><span class="arrow">↗</span></span>
+    </a>
+    <a class="card half" href="distill2.html">
+      <span class="tag">Distillation · RoBERTa</span>
+      <h3>The replication</h3>
+      <p>The same study on RoBERTa-base and DistilRoBERTa, with 25 prompts and separate CKA for attention and MLP writes.</p>
+      <span class="foot"><span>25 prompts · 204 + 102 runs</span><span class="arrow">↗</span></span>
+    </a>
+    <a class="card" href="distill-tiny.html">
+      <span class="tag">Depth compression</span>
+      <h3>BERT → TinyBERT</h3>
+      <p>A real four-layer student, four cross-component CKA matrices, and a frozen-feature task probe when the released MLM head fails.</p>
+      <span class="foot"><span>12 → 4 blocks</span><span class="arrow">↗</span></span>
+    </a>
+    <a class="card" href="distill-qwen.html">
+      <span class="tag">Reasoning · 1.5B</span>
+      <h3>Qwen → R1 distill</h3>
+      <p>Equal depth, different training pipeline. The R1 teacher is too large to run, so the pair is labelled reference and distilled.</p>
+      <span class="foot"><span>28 blocks · 476 conditions</span><span class="arrow">↗</span></span>
+    </a>
+    <a class="card" href="distill-vision.html">
+      <span class="tag">Vision · distillation</span>
+      <h3>Two DeiTs and RegNet</h3>
+      <p>Two students of the same RegNetY-16GF teacher, plus the measured teacher checkpoint, output fidelity, and pooled-feature CKA.</p>
+      <span class="foot"><span>20 images · exact teacher</span><span class="arrow">↗</span></span>
+    </a>
+  </div>
+  <p class="note"><b>Read the limits.</b> Ablation removes a component’s image-specific write, not the component itself. CKA compares geometry, not computation. A small KL is not proof that a block is unnecessary, and a high CKA is not proof of causal transfer. The microscope ranks correlations in a ten-class image bank, not causal roles in full ImageNet.</p>
+</main>
+<footer>
+  <div class="wrap">The underlying lab scripts, checkpoints, notebooks, and captured outputs live in the repository’s <code>labs/</code> folder. The source measurements and run commands are documented in the repository README.</div>
+</footer>
+</body>
+</html>

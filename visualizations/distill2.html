@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scale check: RoBERTa and DistilRoBERTa · The Understanding Machine</title>
+<meta name="description" content="The teacher–student ablation repeated on a larger pair: RoBERTa-base 12 blocks against DistilRoBERTa 6 blocks, 25 masked-LM prompts, with CKA computed separately for the residual stream, attention write and MLP write.">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/distill.css">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="topbar"><div class="inner">
+  <a class="brand" href="index.html">The Understanding <span>Machine</span></a>
+  <nav aria-label="Sections">
+    <a href="index.html">Contents</a>
+    <a href="vision.html">Vision lab</a>
+    <a href="studio.html">Ablation studio</a>
+    <a href="text.html">Language models</a>
+    <a href="travel.html">The ripple</a>
+    <a href="atlas.html">Atlas</a>
+    <a href="distill.html">Distillation</a>
+  </nav>
+  <div class="tools"><button id="themebtn" type="button" aria-label="Switch between light and dark">Theme</button></div>
+</div></header>
+
+<main class="wide distill">
+  <p class="kicker">Part XVI · scale check</p>
+  <h1>The same cut, <i>larger</i>.</h1>
+  <p class="lede">RoBERTa-base has twelve blocks and 124.7M parameters; DistilRoBERTa has six blocks, the same 768 width and twelve heads, and 82.2M parameters. This page repeats the first teacher–student study on that pair: the same 204 teacher and 102 student ablation runs, twenty-five masked-LM prompts instead of twelve, and the same block, head, layer-norm, ripple and CKA measurements. The difference is power and component visibility — CKA is computed separately for the residual stream, the attention write and the MLP write, so the geometry of each component can be compared with its damage fingerprint. Nothing here runs a model; every number is a lookup.</p>
+
+  <div class="facts" id="facts" aria-live="polite"></div>
+
+  <section class="stacks" aria-label="Layer effects">
+    <div class="stack" id="stack-teacher"></div>
+    <div class="stack" id="stack-student"></div>
+  </section>
+  <p class="scale" id="scale"></p>
+
+  <section class="cka-block">
+    <h2>Which teacher layer each student layer resembles</h2>
+    <p class="sub">Linear CKA between every student block and every teacher block, over all non-pad token representations in the twenty-five-prompt bank. One means the two organize the same tokens identically up to an orthogonal transform; zero means no linear agreement. The outlined cell in each row is that student layer’s closest teacher layer — the correspondence is measured, not assumed from the 2:1 depth.</p>
+    <div class="cka-wrap" id="cka"></div>
+    <p class="cka-read" id="cka-read"></p>
+  </section>
+
+  <section class="causal-block">
+    <h2>Does the match survive ablation?</h2>
+    <p class="sub">CKA is measured on a clean pass; a functional correspondence should also predict where damage lands. For each student block, its twenty-five whole-block KL values are correlated with each teacher block’s twenty-five, after removing each layer’s mean and each prompt’s mean so prompt difficulty and layer scale cannot manufacture agreement. This is an intervention fingerprint, not a causal identification: it asks whether two blocks fail on the same prompts, not whether one computes the other.</p>
+    <div id="causal"></div>
+    <p class="cka-read" id="causal-read"></p>
+  </section>
+
+  <section class="parts-block">
+    <h2>Which component carries it?</h2>
+    <p class="sub">A whole-block fingerprint can hide two different failures: attention may stop routing the same way while the MLP still writes the same feature, or the reverse. This repeats the damage comparison separately for the attention write and the MLP write, and reports a permutation null — the best of all student–teacher pairs after shuffling the prompt order, so the size of the search is part of the threshold. Below it, the best CKA partner is shown separately for the residual stream, the attention write and the MLP write.</p>
+    <div id="parts"></div>
+    <p class="cka-read" id="parts-read"></p>
+    <div id="cka-parts"></div>
+  </section>
+
+  <section class="gap-block">
+    <h2>Where the answers diverge</h2>
+    <p class="sub">Both models complete the same masked prompts. The bar is total variation between the two next-token distributions over the union of their top ten tokens; the words are each model’s own top choice. Small gaps mean the compression preserved the output; large ones show where it did not.</p>
+    <div class="gap-list" id="gap"></div>
+  </section>
+
+  <section class="theory">
+    <h2>The idea, and what it costs</h2>
+    <p>Distillation replaces a hard label with a distribution. Hinton, Vinyals and Dean (2015) train the student on the teacher’s softened outputs — logits divided by a temperature <var>T</var> — so that the relative probabilities of wrong answers carry information a one-hot label throws away. They call the extra signal <i>dark knowledge</i>: the teacher’s similarity structure over classes, not just its verdict. The student is not fitted to the data alone; it is fitted to the teacher’s function on the data.</p>
+    <p>DistilRoBERTa is the pair measured here. RoBERTa-base has twelve blocks and 124.7M parameters; the student has six blocks, the same width and tokenizer, and 82.2M parameters. It is the published distilled checkpoint, not a pruned copy assembled on this page; the run does not retrain it and makes no new benchmark claim. What it can do is ask the first study’s question with a larger prompt bank and a second architecture family: which teacher blocks does the student resemble, what happens when each block is removed, and whether attention and the MLP tell the same story.</p>
+
+    <h3>Depth is serial; width is parallel</h3>
+    <p>A transformer block’s compute scales with width times depth, but the two factors buy different things. Width gives each layer more features to write; depth gives the network more sequential transformations. Both pairs studied here halve depth and keep width, so each remaining block is as large as its teacher’s, and what is removed is the number of serial steps. If the computation is largely a circuit reused at several depths, halving depth can preserve most of the function. If each layer adds a distinct stage, it cannot. The two stacks are the measured version of that question, block by block, component by component.</p>
+
+    <h3>What CKA can and cannot say</h3>
+    <p>Linear CKA (Kornblith et al., 2019) compares two representation matrices by the similarity of their Gram matrices. It is invariant to orthogonal transforms and isotropic scaling, which is why it is preferred to raw weight matching, but it is not invariant to arbitrary nonlinear remapping, and a high value does not prove that one layer computes the other’s function. It says the two layers arrange the same inputs similarly in feature space. Measuring it separately for the residual stream, the attention write and the MLP write asks a sharper question: whether the similarity lives in one component or only in their sum.</p>
+
+    <h3>Attention and the MLP are different objects</h3>
+    <p>Attention mixes information across positions; the MLP rewrites each position independently. Prior work finds heads with specialized roles (Voita et al., 2019) and feed-forward layers behaving like key-value memories (Geva et al., 2021). The ablation separates the concatenated attention write, each individual head, the MLP write, and the two layer norms, so the student’s compression can be read per component instead of as a single block number. A student that preserves attention but loses MLP depth is a different object from one that does the reverse, even when both have six blocks.</p>
+
+    <h3>What this page measured, and what it did not</h3>
+    <p>The intervention is mean ablation: a component’s write at every token position is replaced by its average over the prompt bank. That removes the component’s input-specific signal while leaving its shape and the rest of the network intact; it is not the same as deleting the block from the graph. The bank is twenty-five masked-LM prompts, the readout is the distribution at the mask, and the models are the base checkpoints — no downstream fine-tuning, no instruction tuning, no generation. CKA is measured on the same prompts used for the ablations, so the correspondence and the intervention effects are not independent evidence. The claims from the literature above are the papers’ claims, not this run’s; the numbers in the stacks and the matrices are this run’s, and only those.</p>
+
+    <h3>Reading the two stacks</h3>
+    <p>The bar is the KL divergence at the mask when the whole block — all heads plus the MLP — is mean-ablated, on one shared scale across both models. The three numbers beside it are the separate costs of the attention write, the MLP write, and the average of the two layer norms, each measured on its own. A block whose whole-block cost is close to its larger component is dominated by that component; a block where the whole is much larger than either part is doing something the parts do not do alone.</p>
+  </section>
+
+  <section class="method">
+    <h2>Method</h2>
+    <p><b>Prompts.</b> Twenty-five masked-LM sentences, one <code>&lt;mask&gt;</code> each, tokenized with the RoBERTa byte-level BPE vocabulary. <b>Intervention.</b> Mean ablation at every non-pad token position: the node still runs, but its write is replaced by its mean over the bank. <b>Readout.</b> KL divergence between the clean and ablated distributions at the mask, plus the probability of the clean top-1 and the top five tokens. <b>Components.</b> Concatenated attention write, each head separately, MLP write, post-attention layer norm, post-MLP layer norm, and the whole block (all heads plus MLP). <b>Correspondence.</b> Linear CKA over every non-pad token representation, computed on the clean pass for the residual stream, the attention write and the MLP write. <b>Hardware.</b> One T4, float32.</p>
+    <p class="limits"><b>Limits.</b> Encoder-only masked LM, twenty-five prompts, one intervention family. Mean ablation removes input-specific signal but not the component itself, so a small KL does not mean the block is unnecessary — only that its average write is close to sufficient for these prompts. CKA compares geometry, not computation; the damage fingerprint is descriptive and its permutation null is reported on the page. None of this is evidence about fine-tuned downstream accuracy, and it should not be read as a compression recipe.</p>
+  </section>
+
+  <section class="refs">
+    <h2>References</h2>
+    <p>Hinton, Vinyals &amp; Dean, <a href="https://arxiv.org/abs/1503.02531" target="_blank" rel="noopener">Distilling the Knowledge in a Neural Network</a> (2015), arXiv:1503.02531.</p>
+    <p>Sanh, Debut, Chaumond &amp; Wolf, <a href="https://arxiv.org/abs/1910.01108" target="_blank" rel="noopener">DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter</a> (2019), arXiv:1910.01108.</p>
+    <p>Liu et al., <a href="https://arxiv.org/abs/1907.11692" target="_blank" rel="noopener">RoBERTa: A Robustly Optimized BERT Pretraining Approach</a> (2019), arXiv:1907.11692.</p>
+    <p>Kornblith, Norouzi, Lee &amp; Hinton, <a href="https://arxiv.org/abs/1905.00414" target="_blank" rel="noopener">Similarity of Neural Network Representations Revisited</a> (2019), arXiv:1905.00414.</p>
+    <p>Voita, Talbot, Moiseev, Sennrich &amp; Titov, <a href="https://arxiv.org/abs/1905.09418" target="_blank" rel="noopener">Analyzing Multi-Head Self-Attention: Specialized Heads Do the Heavy Lifting, the Rest Can Be Pruned</a> (2019), arXiv:1905.09418.</p>
+    <p>Geva, Schuster, Berant &amp; Levy, <a href="https://arxiv.org/abs/2012.14913" target="_blank" rel="noopener">Transformer Feed-Forward Layers Are Key-Value Memories</a> (2021), arXiv:2012.14913.</p>
+  </section>
+
+  <p class="crosslink">The first, smaller study — BERT-base → DistilBERT, twelve prompts, with the original layer mapping — is <a href="distill.html">here</a>. The 1.5B Qwen/DeepSeek base→distilled run is <a href="distill-qwen.html">here</a>.</p>
+  <p class="backlink"><a href="distill.html">← Teacher and student</a> · <a href="text.html">The language models</a> · <a href="index.html">Back to the book</a></p>
+</main>
+
+<noscript><p class="wrap">This page needs JavaScript: the two stacks are drawn from a measured data file.</p></noscript>
+<script src="distill2-data.js"></script>
+<script src="assets/distill.js?v=8"></script>
+</body>
+</html>

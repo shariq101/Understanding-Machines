@@ -1,0 +1,11 @@
+{
+ "outputs": [
+  null,
+  "model                params   layers heads width dtype\n410m   EleutherAI/pythia-410m   0.41B     24    16  1024 float32\n1.4b   EleutherAI/pythia-1.4b   1.41B     24    16  2048 float32",
+  "induction: loss damage on repeated strings (nats)\nmodel   top1    top5    random5 bottom5 layer-all\n410m     0.019   0.083   0.088   0.155   0.223\n1.4b     0.030   0.064   0.067   0.103   1.018\nclaim 1: the five top heads cost less than the whole layer in both models",
+  "IOI: share of the clean-minus-corrupt gap removed\nmodel   gap    best head  top five  all heads  top five by attention\n410m     7.21      3.6%     15.3%      18.2%                -0.4%\n1.4b     8.51      3.9%     14.8%      16.7%                -0.5%\nclaim 2: no single head, and not all heads at one layer, is the circuit",
+  "logit lens: mean rank of the true token\nmodel   embedding  final   top-1 final\n410m        21167   650.8      31.0%\n1.4b        20337   305.1      28.0%\nclaim 3: prediction is built across depth and does not become certainty",
+  "probe vs the model's own readout\n410m   best L14 probe  79.2%  readout  83.3%  delta +4.2%\n1.4b   best L1  probe  87.5%  readout  95.8%  delta +8.3%\n\nsteering accuracy at alpha = +0.5 (same norm)\nmodel   probe   random  orthogonal\n410m    50.0%   67.7%      67.7%\n1.4b    88.5%   96.9%      96.9%\nclaim 4: the probe direction does not beat the random control; decodability is not use",
+  "claim ledger\n  supported   induction is layer-level and head-redundant    (top5 < whole layer)\n  supported   IOI is distributed across heads                (best head < 10% of gap)\n  descriptive prediction is built across depth               (readout, not mechanism)\n  null        sentiment is readable but not a knob           (probe worse than random)\n\nlimits: two models, one family, one behavioural seed, synthetic IOI template,\nno MLP ablation, no held-out sentence frame. The controls are the contribution."
+ ]
+}

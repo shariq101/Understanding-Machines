@@ -1,0 +1,111 @@
+/* the ripple: a layer stack whose bars are the measured residual change */
+
+.travel-page{padding-top:34px}
+.travel-page h1{font-size:clamp(2.1rem,5vw,3.3rem);line-height:1.03;letter-spacing:-.035em;margin:.1em 0 .3em}
+.travel-page h1 i{font-style:italic;color:var(--ox)}
+.travel-page .lede{max-width:47rem;margin-bottom:1.3rem}
+
+.flow{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(18rem,.85fr);gap:20px;align-items:start}
+@media(max-width:940px){.flow{grid-template-columns:1fr}}
+
+.stack-panel{padding-bottom:12px}
+.stack{padding:8px 0 2px}
+
+.srow{display:grid;grid-template-columns:2.1rem 3.9rem minmax(0,1fr) 3.4rem;gap:8px;align-items:center;
+  padding:4px 5px;border-radius:4px;cursor:pointer;border-top:1px dotted var(--line)}
+.srow:first-child{border-top:0}
+.srow:hover{background:var(--paper3)}
+.srow .idx{font:10.5px/1 var(--mono);color:var(--muted)}
+.srow .blocks{display:flex;gap:3px}
+.srow .blk{font:9px/1 var(--mono);letter-spacing:.06em;padding:4px 5px;border-radius:2px;
+  border:1px solid color-mix(in srgb,var(--ink) 16%,transparent);color:var(--ink2)}
+.srow .blk.a{background:color-mix(in srgb,var(--teal) 16%,var(--paper2))}
+.srow .blk.m{background:color-mix(in srgb,var(--ox) 13%,var(--paper2))}
+.srow.cut{background:color-mix(in srgb,var(--ox) 8%,var(--paper2));box-shadow:inset 3px 0 0 var(--ox)}
+.srow.cut .blk{opacity:.4;border-style:dashed;text-decoration:line-through}
+.srow .track{height:10px;background:var(--paper3);border-radius:2px;overflow:hidden;
+  border:1px solid color-mix(in srgb,var(--ink) 8%,transparent)}
+.srow .track i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--ox));
+  border-radius:2px;transition:width .45s cubic-bezier(.2,.7,.2,1)}
+.srow .val{font:10px/1 var(--mono);color:var(--muted);text-align:right}
+.srow.lit{background:color-mix(in srgb,var(--gold) 18%,var(--paper2))}
+.srow.lit .track i{box-shadow:0 0 0 1px var(--ox)}
+
+.readout{background:var(--paper2);border:1px solid var(--line);border-radius:6px;padding:12px 14px;
+  position:sticky;top:74px}
+.readout .tag{font:700 9.5px/1.4 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--ox);margin:0 0 4px}
+.readout h3{margin:0 0 2px;font-size:1.02rem}
+.readout .sub{font:11.5px/1.5 var(--sans);color:var(--muted);margin:0 0 10px}
+.readout .metric{font:11.5px/1.2 var(--sans);color:var(--muted);margin:0 0 6px;letter-spacing:.04em}
+.readout .metric b{font:600 1.6rem/1 var(--serif);color:var(--ink);display:block;margin-top:3px}
+.readout .btn{width:100%;margin:2px 0 12px;padding:7px 10px;border-radius:4px;border:1px solid var(--line2);
+  background:var(--paper3);color:var(--ink2);font:11.5px/1 var(--sans);letter-spacing:.04em;cursor:pointer}
+.readout .btn:hover{border-color:var(--ox);color:var(--ox)}
+.readout hr{border:0;border-top:1px solid var(--line);margin:10px 0}
+
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cmp h4{font:700 9px/1.4 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 5px}
+.bar{display:grid;grid-template-columns:minmax(0,1fr) 2.4rem;gap:4px;align-items:center;padding:1px 0}
+.bar .t{font:10px/1.2 var(--mono);color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .p{font:9.5px/1 var(--mono);color:var(--muted);text-align:right}
+.bar .rail2{grid-column:1 / -1;height:6px;background:var(--paper3);border-radius:2px;overflow:hidden;margin-bottom:2px}
+.bar .rail2 i{display:block;height:100%;background:var(--teal)}
+.cmp.after .bar .rail2 i{background:var(--ox)}
+
+.matrix-panel{margin-top:20px}
+.matrix{display:grid;gap:2px;padding:6px 0 2px;overflow-x:auto}
+.mcell,.mhead,.mrow{min-height:19px;border-radius:2px}
+.mhead{font:9px/1 var(--mono);color:var(--muted);display:flex;align-items:center;justify-content:center}
+.mrow{font:9px/1 var(--mono);color:var(--muted);display:flex;align-items:center;justify-content:flex-end;padding-right:4px;cursor:pointer}
+.mcell{--v:0;background:color-mix(in srgb,var(--ox) calc(var(--v)*78% + 3%),var(--paper2));
+  border:1px solid color-mix(in srgb,var(--ink) 6%,transparent);cursor:pointer;min-width:16px}
+.mcell.zero{background:repeating-linear-gradient(135deg,var(--paper2),var(--paper2) 3px,var(--paper3) 3px,var(--paper3) 4px);
+  cursor:default;border-color:transparent}
+.mcell.on{outline:2px solid var(--blue);outline-offset:-2px}
+.matrix-note{font:10.5px/1.5 var(--mono);color:var(--muted);margin-top:6px}
+
+@media(prefers-reduced-motion:reduce){.srow .track i{transition:none}}
+
+/* the architecture diagram: measured tint, not decoration */
+.arch-svg{width:100%;height:auto;display:block;margin:4px 0 2px}
+.arch-svg .rail{stroke:var(--line2);stroke-width:1.2}
+.arch-svg .tap{stroke:var(--line2);stroke-width:1}
+.arch-svg .tapdot{fill:var(--line2)}
+.arch-svg .box{fill:var(--paper2);stroke:var(--line);stroke-width:1}
+.arch-svg .ablock{cursor:pointer;outline:none}
+.arch-svg .ablock:hover .box,.arch-svg .ablock:focus-visible .box{stroke:var(--teal);stroke-width:1.5}
+.arch-svg .ablock.cut .box{stroke:var(--ox);stroke-dasharray:4 3;stroke-width:1.6}
+.arch-svg .lbl{font:10.5px var(--mono);fill:var(--ink2)}
+.arch-svg .lbl.dim{font-size:8.5px;fill:var(--muted)}
+.arch-svg .mini{fill:color-mix(in srgb,var(--teal) 20%,var(--paper2));stroke:none}
+.arch-svg .mini.m{fill:color-mix(in srgb,var(--ox) 16%,var(--paper2))}
+.arch-svg .mini-t{font:8px var(--mono);fill:var(--ink2);letter-spacing:.05em}
+.arch-svg .plus{font:9px var(--sans);fill:var(--muted)}
+.arch-svg .bar-bg{fill:var(--paper3)}
+.arch-svg .bar-fill{fill:var(--ox)}
+.arch-svg .val{font:9.5px var(--mono);fill:var(--muted)}
+.arch-svg .cutnote{font:8.5px var(--sans);fill:var(--ox);letter-spacing:.1em;text-transform:uppercase}
+.arch-svg .node rect{fill:var(--paper3);stroke:var(--line2)}
+.arch-svg .out-t{font:10px var(--mono);fill:var(--ox-dk)}
+.arch-svg .ablock.lit .box{stroke:var(--gold);stroke-width:1.8}
+.arch-svg .pulse{fill:var(--gold);stroke:var(--paper2);stroke-width:1}
+
+.block-inset{border-top:1px dotted var(--line);margin-top:6px;padding-top:8px}
+.inset-h{font:700 9px/1.4 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 5px}
+.inset-row{display:flex;flex-wrap:wrap;align-items:center;gap:5px;font:9.5px/1.6 var(--mono);color:var(--ink2);margin-bottom:3px}
+.inset-row b{font-weight:600;padding:2px 5px;border-radius:2px;border:1px solid var(--line);background:var(--paper2)}
+.inset-row b.a{background:color-mix(in srgb,var(--teal) 18%,var(--paper2))}
+.inset-row b.m{background:color-mix(in srgb,var(--ox) 14%,var(--paper2))}
+.inset-row b.add{color:var(--ox);border-color:var(--ox)}
+.inset-row i{font-style:normal;color:var(--muted)}
+
+/* the component picker: which piece of the selected block is cut */
+.picker{margin:2px 0 2px}
+.prow{display:flex;flex-wrap:wrap;align-items:center;gap:3px}
+.plabel{font:9px/1.4 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.pchip{background:var(--paper2);border:1px solid var(--line);color:var(--ink2);border-radius:3px;
+  padding:4px 6px;font:9.5px/1 var(--mono);cursor:pointer}
+.pchip:hover{border-color:var(--teal);color:var(--teal)}
+.pchip.on{background:color-mix(in srgb,var(--ox) 12%,var(--paper3));border-color:var(--ox);color:var(--ox-dk);font-weight:600}
+.pnote{font:9.5px/1.4 var(--sans);color:var(--muted)}
+.stack-wrap{border-top:1px dotted var(--line);margin-top:10px;padding-top:8px}

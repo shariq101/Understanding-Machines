@@ -1,0 +1,9 @@
+{
+ "outputs": [
+  null,
+  "loss before training: 0.9258\ngradient shapes: [(2, 4), (1, 4), (4, 1), (1, 1)]",
+  "max finite-difference error: 1.21e-09",
+  "final loss: 0.00433\npredictions: [0, 1, 1, 0] targets: [0, 1, 1, 0]\naccuracy: 1.0",
+  null
+ ]
+}

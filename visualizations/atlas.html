@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The activation atlas · The Understanding Machine</title>
+<meta name="description" content="One clean forward pass per model, opened layer by layer: patch-token dimensions for vision transformers, per-head attention for language models, and the model's own readout. No ablation, no model in the browser.">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/atlas.css">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="topbar"><div class="inner">
+  <a class="brand" href="index.html">The Understanding <span>Machine</span></a>
+  <nav aria-label="Sections">
+    <a href="index.html">Contents</a>
+    <a href="vision.html">Vision lab</a>
+    <a href="studio.html">Ablation studio</a>
+    <a href="text.html">Language models</a>
+    <a href="travel.html">The ripple</a>
+    <a href="atlas.html" class="active" aria-current="page">Atlas</a>
+    <a href="distill.html">Distillation</a>
+  </nav>
+  <div class="tools"><button id="themebtn" type="button" aria-label="Switch between light and dark">Theme</button></div>
+</div></header>
+
+<main class="wide atlas">
+  <p class="kicker">Part XVI · supplement</p>
+  <h1>What each layer <i>writes</i>.</h1>
+  <p class="lede">The ablation pages ask what happens when a piece is taken out. This one asks what is there to begin with: one clean forward pass, opened into a grid. A column per layer, a cell per hidden dimension or attention head, and the model’s own readout at the right. Nothing is removed and nothing runs here — every square is a lookup in a pass measured once on a GPU.</p>
+
+  <div class="controls">
+    <div class="seg" id="family" role="tablist" aria-label="Model family">
+      <button type="button" data-family="vision" class="on" role="tab" aria-selected="true">Vision</button>
+      <button type="button" data-family="text" role="tab" aria-selected="false">Language</button>
+    </div>
+    <div class="rail" id="models" role="tablist" aria-label="Model"></div>
+  </div>
+  <div class="facts" id="facts" aria-live="polite"></div>
+  <div class="imgpick" id="imgpick" aria-label="Input image"></div>
+
+  <div class="fig-scroll" id="figure" aria-live="polite"></div>
+  <div class="legend" id="legend"></div>
+  <p class="stage-note" id="note"></p>
+
+  <p class="method"><b>How to read a cell.</b> For a vision transformer, every patch token is a row of the residual stream; taking one dimension across the 14×14 or 16×16 patches gives a picture of where that dimension is large. The six dimensions are the ones with the most variance at the last layer, and every layer is scaled to its own largest absolute value, so the colour compares positions within a layer, not between layers. Blue and red are the sign of a value, not a class. For a language model, a cell is one head’s attention over the last sixteen prompt tokens: rows are queries, columns are keys, and darker means more attention. The right column is the model’s readout — a ten-way softmax over the Imagenette classes for the supervised heads, ten fixed class prompts for CLIP, the next-token distribution for the language models. A model with no class head says so instead of borrowing one.</p>
+
+  <p class="backlink"><a href="studio.html">← The ablation studio</a> · <a href="text.html">The language models</a> · <a href="index.html">Back to the book</a></p>
+</main>
+
+<noscript><p class="wrap">This page needs JavaScript: the grid is drawn from a measured data file.</p></noscript>
+<script src="atlas-data.js"></script>
+<script src="assets/atlas.js?v=1"></script>
+</body>
+</html>
